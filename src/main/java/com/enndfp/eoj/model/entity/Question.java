@@ -7,13 +7,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户
+ * 题目
  *
  * @auther Enndfp
  */
-@TableName(value = "user")
+@TableName(value = "question")
 @Data
-public class User implements Serializable {
+public class Question implements Serializable {
     /**
      * id
      */
@@ -21,34 +21,49 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户账号
+     * 题目标题
      */
-    private String userAccount;
+    private String title;
 
     /**
-     * 用户密码
+     * 题目内容
      */
-    private String userPassword;
+    private String content;
 
     /**
-     * 用户昵称
+     * 题目标签列表（json 数组）
      */
-    private String userName;
+    private String tags;
 
     /**
-     * 用户头像
+     * 题目答案
      */
-    private String userAvatar;
+    private String answer;
 
     /**
-     * 用户简介
+     * 题目提交数
      */
-    private String userProfile;
+    private Integer submitNum;
 
     /**
-     * 用户角色：user/admin
+     * 题目通过数
      */
-    private String userRole;
+    private Integer acceptedNum;
+
+    /**
+     * 判题用例（json 数组）
+     */
+    private String judgeCase;
+
+    /**
+     * 判题配置（json 对象）
+     */
+    private String judgeConfig;
+
+    /**
+     * 创建用户 id
+     */
+    private Long userId;
 
     /**
      * 创建时间

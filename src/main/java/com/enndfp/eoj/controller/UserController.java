@@ -65,6 +65,7 @@ public class UserController {
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 1. 校验请求参数
         ThrowUtil.throwIf(userLoginRequest == null, ErrorCode.PARAMS_ERROR);
+        ThrowUtil.throwIf(request == null, ErrorCode.PARAMS_ERROR);
 
         // 2. 处理登录逻辑
         LoginUserVO loginUserVO = userService.userLogin(userLoginRequest, request);
