@@ -1,10 +1,10 @@
 package com.enndfp.eoj.model.vo;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.enndfp.eoj.model.dto.question.JudgeConfig;
 import com.enndfp.eoj.model.entity.Question;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -86,7 +86,8 @@ public class QuestionVO implements Serializable {
         }
 
         // 2. 将包装类转换为对象
-        Question question = BeanUtil.toBean(questionVO, Question.class);
+        Question question = new Question();
+        BeanUtils.copyProperties(questionVO, question);
         List<String> tagList = questionVO.getTags();
         if (tagList != null) {
             question.setTags(JSONUtil.toJsonStr(tagList));
@@ -112,7 +113,8 @@ public class QuestionVO implements Serializable {
         }
 
         // 2. 将对象转换为包装类
-        QuestionVO questionVO = BeanUtil.toBean(question, QuestionVO.class);
+        QuestionVO questionVO = new QuestionVO();
+        BeanUtils.copyProperties(question, questionVO);
         List<String> tagList = JSONUtil.toList(question.getTags(), String.class);
         questionVO.setTags(tagList);
         String judgeConfigStr = question.getJudgeConfig();
