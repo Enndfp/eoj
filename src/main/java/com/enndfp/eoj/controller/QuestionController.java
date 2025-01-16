@@ -7,14 +7,17 @@ import com.enndfp.eoj.common.DeleteRequest;
 import com.enndfp.eoj.common.ErrorCode;
 import com.enndfp.eoj.common.ResultUtil;
 import com.enndfp.eoj.constant.UserConstant;
+import com.enndfp.eoj.exception.BusinessException;
 import com.enndfp.eoj.exception.ThrowUtil;
 import com.enndfp.eoj.model.dto.question.QuestionAddRequest;
 import com.enndfp.eoj.model.dto.question.QuestionEditRequest;
 import com.enndfp.eoj.model.dto.question.QuestionQueryRequest;
 import com.enndfp.eoj.model.dto.question.QuestionUpdateRequest;
 import com.enndfp.eoj.model.entity.Question;
+import com.enndfp.eoj.model.entity.User;
 import com.enndfp.eoj.model.vo.QuestionVO;
 import com.enndfp.eoj.service.QuestionService;
+import com.enndfp.eoj.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * 题目接口
@@ -36,6 +40,9 @@ public class QuestionController {
 
     @Resource
     private QuestionService questionService;
+
+    @Resource
+    private UserService userService;
 
     /**
      * 创建题目
@@ -114,6 +121,32 @@ public class QuestionController {
         boolean result = questionService.editQuestion(questionEditRequest, request);
 
         return ResultUtil.success(result);
+    }
+
+    /**
+     * 根据 id 获取题目
+     *
+     * @param id      题目 id
+     * @param request 请求
+     * @return 题目信息
+     */
+    @GetMapping("/get")
+    @ApiOperation(value = "根据 id 获取题目")
+    public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
+        // 1. 校验请求参数
+        ThrowUtil.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+
+        // 2. 处理获取题目逻辑
+        Question question = questionService.getById(id);
+        ThrowUtil.throwIf(question == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 3. 校验是否有权限查看题目
+        User loginUser = userService.getLoginUser(request);
+        if (!Objects.equals(loginUser.getId(), question.getUserId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+
+        return ResultUtil.success(question);
     }
 
     /**
