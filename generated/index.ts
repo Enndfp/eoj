@@ -15,6 +15,7 @@ export type { BaseResponse_Page_QuestionSubmitVO_ } from "./models/BaseResponse_
 export type { BaseResponse_Page_QuestionVO_ } from "./models/BaseResponse_Page_QuestionVO_";
 export type { BaseResponse_Page_User_ } from "./models/BaseResponse_Page_User_";
 export type { BaseResponse_Page_UserVO_ } from "./models/BaseResponse_Page_UserVO_";
+export type { BaseResponse_Question_ } from "./models/BaseResponse_Question_";
 export type { BaseResponse_QuestionVO_ } from "./models/BaseResponse_QuestionVO_";
 export type { BaseResponse_User_ } from "./models/BaseResponse_User_";
 export type { BaseResponse_UserVO_ } from "./models/BaseResponse_UserVO_";

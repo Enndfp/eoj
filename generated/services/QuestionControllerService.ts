@@ -6,6 +6,7 @@ import type { BaseResponse_boolean_ } from "../models/BaseResponse_boolean_";
 import type { BaseResponse_long_ } from "../models/BaseResponse_long_";
 import type { BaseResponse_Page_Question_ } from "../models/BaseResponse_Page_Question_";
 import type { BaseResponse_Page_QuestionVO_ } from "../models/BaseResponse_Page_QuestionVO_";
+import type { BaseResponse_Question_ } from "../models/BaseResponse_Question_";
 import type { BaseResponse_QuestionVO_ } from "../models/BaseResponse_QuestionVO_";
 import type { DeleteRequest } from "../models/DeleteRequest";
 import type { QuestionAddRequest } from "../models/QuestionAddRequest";
@@ -75,6 +76,29 @@ export class QuestionControllerService {
       method: "POST",
       url: "/api/question/edit",
       body: questionEditRequest,
+      errors: {
+        401: `Unauthorized`,
+        403: `Forbidden`,
+        404: `Not Found`
+      }
+    });
+  }
+
+  /**
+   * 根据 id 获取题目
+   * @param id id
+   * @returns BaseResponse_Question_ OK
+   * @throws ApiError
+   */
+  public static getQuestionByIdUsingGet(
+    id?: number
+  ): CancelablePromise<BaseResponse_Question_> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/question/get",
+      query: {
+        "id": id
+      },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,

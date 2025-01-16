@@ -2,19 +2,19 @@
   <div id="addQuestionView">
     <h2>创建题目</h2>
     <a-form :model="form" label-align="left" @submit="handleSubmit">
-      <a-form-item field="title" label="题目标题">
+      <a-form-item field="title" label="标题">
         <a-input v-model="form.title" placeholder="请输入标题"></a-input>
       </a-form-item>
-      <a-form-item field="tags" label="题目标签">
+      <a-form-item field="tags" label="标签">
         <a-input-tag v-model="form.tags" placeholder="请输入标签" allow-clear />
       </a-form-item>
-      <a-form-item field="content" label="题目内容">
+      <a-form-item field="content" label="内容">
         <MdEditor
           :value="form.content"
           :handle-change="onContentChange"
         ></MdEditor>
       </a-form-item>
-      <a-form-item field="answer" label="题目答案">
+      <a-form-item field="answer" label="答案">
         <MdEditor :value="form.answer" :handle-change="onAnswerChange">
         </MdEditor>
       </a-form-item>
@@ -49,7 +49,7 @@
           </a-form-item>
         </a-space>
       </a-form-item>
-      <a-form-item label="测试用例" :content-flex="false" :merge-props="false">
+      <a-form-item label="判题用例" :content-flex="false" :merge-props="false">
         <a-form-item
           v-for="(judgeCaseItem, index) of form.judgeCase"
           :key="index"
@@ -63,7 +63,7 @@
             >
               <a-input
                 v-model="judgeCaseItem.input"
-                placeholder="请输入测试输入用例"
+                placeholder="请输入判题输入用例"
               />
             </a-form-item>
             <a-form-item
@@ -73,17 +73,17 @@
             >
               <a-input
                 v-model="judgeCaseItem.output"
-                placeholder="请输入测试输出用例"
+                placeholder="请输入判题输出用例"
               />
             </a-form-item>
             <a-button @click="handleDelete(index)" status="danger"
-              >删除</a-button
-            >
+              >删除
+            </a-button>
           </a-space>
         </a-form-item>
         <div style="margin-top: 32px">
           <a-button @click="handleAdd()" type="outline" status="success"
-            >新增测试用例
+            >新增判题用例
           </a-button>
         </div>
       </a-form-item>
@@ -97,18 +97,21 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
+import { useRoute } from "vue-router";
 
-const form = reactive({
-  answer: "暴力破解",
-  content: "题目内容",
+let form = ref({
+  title: "",
+  content: "",
+  tags: [],
+  answer: "",
   judgeCase: [
     {
-      input: "1 2",
-      output: "3 4",
+      input: "",
+      output: "",
     },
   ],
   judgeConfig: {
@@ -116,35 +119,93 @@ const form = reactive({
     stackLimit: 1000,
     timeLimit: 1000,
   },
-  tags: ["栈", "简单"],
-  title: "A + B",
 });
-const doSubmit = async () => {
-  console.log(form);
-  const res = await QuestionControllerService.addQuestionUsingPost(form);
+
+const route = useRoute();
+const updatePage = route.path.includes("update");
+/**
+ * 根据题目id获取老的数据
+ */
+const loadData = async () => {
+  const id = route.query.id;
+  if (!id) return;
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(
+    id as any
+  );
   if (res.code === 0) {
-    Message.success("创建成功");
+    form.value = res.data as any;
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
+    }
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        memoryLimit: 1000,
+        stackLimit: 1000,
+        timeLimit: 1000,
+      };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
+    }
+    if (!form.value.tags) {
+      form.value.tags = [];
+    } else {
+      form.value.tags = JSON.parse(form.value.tags as any);
+    }
   } else {
-    Message.error("创建失败，" + res.message);
+    Message.error("加载失败" + res.message);
+  }
+};
+onMounted(() => {
+  loadData();
+});
+
+const doSubmit = async () => {
+  console.log(form.value);
+  //判断更新还是新增
+  if (updatePage) {
+    const res = await QuestionControllerService.updateQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      Message.success("更新成功");
+    } else {
+      Message.error("更新失败，" + res.message);
+    }
+  } else {
+    const res = await QuestionControllerService.addQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      Message.success("创建成功");
+    } else {
+      Message.error("创建失败，" + res.message);
+    }
   }
 };
 const handleAdd = () => {
-  form.judgeCase.push({
+  form.value.judgeCase.push({
     input: "",
     output: "",
   });
 };
 const handleDelete = (index: number) => {
-  form.judgeCase.splice(index, 1);
+  form.value.judgeCase.splice(index, 1);
 };
 const handleSubmit = () => {
   console.log(1);
 };
 const onContentChange = (value: string) => {
-  form.content = value;
+  form.value.content = value;
 };
 const onAnswerChange = (value: string) => {
-  form.answer = value;
+  form.value.answer = value;
 };
 </script>
 <style scoped></style>
