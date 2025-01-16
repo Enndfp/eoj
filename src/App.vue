@@ -9,7 +9,6 @@
   </div>
 </template>
 
-<style></style>
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -28,3 +27,9 @@ onMounted(() => {
   doInit();
 });
 </script>
+
+<style>
+.bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
+  display: none;
+}
+</style>
