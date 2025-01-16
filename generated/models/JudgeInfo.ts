@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type PostEditRequest = {
-  content?: string;
-  id?: number;
-  tags?: Array<string>;
-  title?: string;
+export type JudgeInfo = {
+  memory?: number;
+  message?: string;
+  time?: number;
 };
 

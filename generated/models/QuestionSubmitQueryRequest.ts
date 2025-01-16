@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PostQueryRequest } from "./PostQueryRequest";
-
-export type PostFavourQueryRequest = {
+export type QuestionSubmitQueryRequest = {
   current?: number;
+  language?: string;
   pageSize?: number;
-  postQueryRequest?: PostQueryRequest;
+  questionId?: number;
   sortField?: string;
   sortOrder?: string;
+  status?: number;
   userId?: number;
 };
 

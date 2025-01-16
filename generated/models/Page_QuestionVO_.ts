@@ -3,16 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { OrderItem } from "./OrderItem";
-import type { PostVO } from "./PostVO";
+import type { QuestionVO } from "./QuestionVO";
 
-export type Page_PostVO_ = {
+export type Page_QuestionVO_ = {
   countId?: string;
   current?: number;
   maxLimit?: number;
   optimizeCountSql?: boolean;
   orders?: Array<OrderItem>;
   pages?: number;
-  records?: Array<PostVO>;
+  records?: Array<QuestionVO>;
   searchCount?: boolean;
   size?: number;
   total?: number;

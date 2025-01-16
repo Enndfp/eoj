@@ -22,7 +22,7 @@ import { request as __request } from "../core/request";
 
 export class UserControllerService {
   /**
-   * addUser
+   * 创建用户（仅管理员）
    * @param userAddRequest userAddRequest
    * @returns BaseResponse_long_ OK
    * @returns any Created
@@ -44,7 +44,7 @@ export class UserControllerService {
   }
 
   /**
-   * deleteUser
+   * 删除用户（仅管理员）
    * @param deleteRequest deleteRequest
    * @returns BaseResponse_boolean_ OK
    * @returns any Created
@@ -66,7 +66,7 @@ export class UserControllerService {
   }
 
   /**
-   * getUserById
+   * 根据 id 获取用户（仅管理员）
    * @param id id
    * @returns BaseResponse_User_ OK
    * @throws ApiError
@@ -89,7 +89,7 @@ export class UserControllerService {
   }
 
   /**
-   * getLoginUser
+   * 获取当前登录用户（已脱敏）
    * @returns BaseResponse_LoginUserVO_ OK
    * @throws ApiError
    */
@@ -106,7 +106,7 @@ export class UserControllerService {
   }
 
   /**
-   * getUserVOById
+   * 根据 id 获取用户（已脱敏）
    * @param id id
    * @returns BaseResponse_UserVO_ OK
    * @throws ApiError
@@ -129,7 +129,7 @@ export class UserControllerService {
   }
 
   /**
-   * listUserByPage
+   * 分页获取用户列表（仅管理员）
    * @param userQueryRequest userQueryRequest
    * @returns BaseResponse_Page_User_ OK
    * @returns any Created
@@ -151,7 +151,7 @@ export class UserControllerService {
   }
 
   /**
-   * listUserVOByPage
+   * 分页获取用户列表（已脱敏）
    * @param userQueryRequest userQueryRequest
    * @returns BaseResponse_Page_UserVO_ OK
    * @returns any Created
@@ -173,7 +173,7 @@ export class UserControllerService {
   }
 
   /**
-   * userLogin
+   * 用户登录
    * @param userLoginRequest userLoginRequest
    * @returns BaseResponse_LoginUserVO_ OK
    * @returns any Created
@@ -195,30 +195,7 @@ export class UserControllerService {
   }
 
   /**
-   * userLoginByWxOpen
-   * @param code code
-   * @returns BaseResponse_LoginUserVO_ OK
-   * @throws ApiError
-   */
-  public static userLoginByWxOpenUsingGet(
-    code: string
-  ): CancelablePromise<BaseResponse_LoginUserVO_> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/user/login/wx_open",
-      query: {
-        "code": code
-      },
-      errors: {
-        401: `Unauthorized`,
-        403: `Forbidden`,
-        404: `Not Found`
-      }
-    });
-  }
-
-  /**
-   * userLogout
+   * 用户注销
    * @returns BaseResponse_boolean_ OK
    * @returns any Created
    * @throws ApiError
@@ -236,7 +213,7 @@ export class UserControllerService {
   }
 
   /**
-   * userRegister
+   * 用户注册
    * @param userRegisterRequest userRegisterRequest
    * @returns BaseResponse_long_ OK
    * @returns any Created
@@ -258,7 +235,7 @@ export class UserControllerService {
   }
 
   /**
-   * updateUser
+   * 更新用户（仅管理员）
    * @param userUpdateRequest userUpdateRequest
    * @returns BaseResponse_boolean_ OK
    * @returns any Created
@@ -280,7 +257,7 @@ export class UserControllerService {
   }
 
   /**
-   * updateMyUser
+   * 更新个人信息
    * @param userUpdateMyRequest userUpdateMyRequest
    * @returns BaseResponse_boolean_ OK
    * @returns any Created
