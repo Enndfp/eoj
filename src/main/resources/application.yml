@@ -40,3 +40,5 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.enndfp.eoj.controller
+codesandbox:
+  type: example

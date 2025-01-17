@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.enndfp.eoj.common.ErrorCode;
 import com.enndfp.eoj.constant.CommonConstant;
 import com.enndfp.eoj.exception.ThrowUtil;
+import com.enndfp.eoj.judge.JudgeService;
 import com.enndfp.eoj.mapper.QuestionSubmitMapper;
 import com.enndfp.eoj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.enndfp.eoj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
@@ -20,12 +21,14 @@ import com.enndfp.eoj.service.QuestionSubmitService;
 import com.enndfp.eoj.service.UserService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +44,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
     @Resource
     private UserService userService;
+
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
@@ -71,7 +78,13 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         boolean save = this.save(questionSubmit);
         ThrowUtil.throwIf(!save, ErrorCode.SYSTEM_ERROR, "题目提交失败");
 
-        return questionSubmit.getId();
+        // 6. 异步执行判题
+        Long questionSubmitId = questionSubmit.getId();
+        CompletableFuture.runAsync(() -> {
+            judgeService.doJudge(questionSubmitId);
+        });
+
+        return questionSubmitId;
     }
 
     @Override
