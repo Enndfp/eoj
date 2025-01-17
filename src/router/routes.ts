@@ -1,7 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import HomeView from "@/views/ExampleView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
-import AdminView from "@/views/AdminView.vue";
 import AccessEnum from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
@@ -35,7 +34,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "创建题目",
     component: AddQuestionView,
     meta: {
-      access: AccessEnum.ADMIN,
+      access: AccessEnum.USER,
     },
   },
   {
@@ -43,7 +42,8 @@ export const routes: Array<RouteRecordRaw> = [
     name: "更新题目",
     component: AddQuestionView,
     meta: {
-      access: AccessEnum.ADMIN,
+      hideInMenu: true,
+      access: AccessEnum.USER,
     },
   },
   {
@@ -60,33 +60,11 @@ export const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
-    path: "/hide",
-    name: "隐藏页面",
-    component: HomeView,
-    meta: {
-      hideInMenu: true,
-    },
-  },
-  {
     path: "/noAuth",
     name: "无权限",
     component: NoAuthView,
-  },
-  {
-    path: "/admin",
-    name: "admin",
-    component: AdminView,
     meta: {
-      access: AccessEnum.ADMIN,
+      hideInMenu: true,
     },
-  },
-  {
-    path: "/about",
-    name: "关于我的",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
 ];
