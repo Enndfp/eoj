@@ -1,5 +1,9 @@
 <template>
-  <div id="code-editor" ref="codeEditorRef" style="min-height: 400px"></div>
+  <div
+    id="code-editor"
+    ref="codeEditorRef"
+    style="min-height: 400px; height: 70vh"
+  ></div>
 </template>
 
 <script setup lang="ts">
@@ -11,6 +15,7 @@ import { defineProps, onMounted, ref, toRaw, withDefaults } from "vue";
  */
 interface Props {
   value: string;
+  language: string;
   handleChange: (v: string) => void;
 }
 
@@ -19,6 +24,7 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  language: () => "java",
   handleChange: (v: string) => {
     console.log(v);
   },
@@ -34,7 +40,7 @@ onMounted(() => {
   // Hover on each property to see its docs!
   codeEditor.value = monaco.editor.create(codeEditorRef.value, {
     value: props.value,
-    language: "java",
+    language: props.language,
     automaticLayout: true,
     minimap: {
       enabled: true,
