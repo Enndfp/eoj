@@ -1,5 +1,4 @@
 import { RouteRecordRaw } from "vue-router";
-import HomeView from "@/views/ExampleView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import AccessEnum from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
@@ -7,6 +6,7 @@ import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import QuestionsView from "@/views/question/QuestionsView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -28,6 +28,11 @@ export const routes: Array<RouteRecordRaw> = [
         component: UserRegisterView,
       },
     ],
+  },
+  {
+    path: "/question",
+    name: "浏览题目",
+    component: QuestionsView,
   },
   {
     path: "/add/question",
@@ -56,8 +61,8 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    name: "浏览题目",
-    component: HomeView,
+    name: "主页",
+    component: QuestionsView,
   },
   {
     path: "/noAuth",

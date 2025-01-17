@@ -31,7 +31,7 @@ const router = useRouter();
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref({
-  pageSize: 1,
+  pageSize: 10,
   current: 1,
 });
 const loadData = async () => {
