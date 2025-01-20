@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
-import { defineProps, onMounted, ref, toRaw, withDefaults } from "vue";
+import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
 
 /**
  * 定义组件属性类型
@@ -32,6 +32,18 @@ const props = withDefaults(defineProps<Props>(), {
 
 const codeEditorRef = ref();
 const codeEditor = ref();
+
+watch(
+  () => props.language,
+  () => {
+    if (codeEditor.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditor.value).getModel(),
+        props.language
+      );
+    }
+  }
+);
 
 onMounted(() => {
   if (!codeEditorRef.value) {
