@@ -1,6 +1,5 @@
 package com.enndfp.eoj.judge.codesandbox.model;
 
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

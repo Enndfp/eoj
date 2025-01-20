@@ -1,7 +1,7 @@
 package com.enndfp.eoj.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.entity.QuestionSubmit;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

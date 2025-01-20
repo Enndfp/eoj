@@ -3,7 +3,7 @@ package com.enndfp.eoj.judge.strategy;
 import cn.hutool.json.JSONUtil;
 import com.enndfp.eoj.model.dto.question.JudgeCase;
 import com.enndfp.eoj.model.dto.question.JudgeConfig;
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.entity.Question;
 import com.enndfp.eoj.model.enums.JudgeInfoMessageEnum;
 

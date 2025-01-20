@@ -3,7 +3,7 @@ package com.enndfp.eoj.judge.codesandbox.impl;
 import com.enndfp.eoj.judge.codesandbox.CodeSandbox;
 import com.enndfp.eoj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eoj.judge.codesandbox.model.ExecuteCodeResponse;
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.enums.JudgeInfoMessageEnum;
 import com.enndfp.eoj.model.enums.QuestionSubmitStatusEnum;
 

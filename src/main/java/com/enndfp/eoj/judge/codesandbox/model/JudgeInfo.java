@@ -1,4 +1,4 @@
-package com.enndfp.eoj.model.dto.questionsubmit;
+package com.enndfp.eoj.judge.codesandbox.model;
 
 import lombok.Data;
 

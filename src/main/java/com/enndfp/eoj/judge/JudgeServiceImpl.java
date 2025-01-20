@@ -10,7 +10,7 @@ import com.enndfp.eoj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eoj.judge.codesandbox.model.ExecuteCodeResponse;
 import com.enndfp.eoj.judge.strategy.JudgeContext;
 import com.enndfp.eoj.model.dto.question.JudgeCase;
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.entity.Question;
 import com.enndfp.eoj.model.entity.QuestionSubmit;
 import com.enndfp.eoj.model.enums.QuestionSubmitStatusEnum;

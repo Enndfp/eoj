@@ -1,6 +1,6 @@
 package com.enndfp.eoj.judge.strategy;
 
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 
 /**
  * 判题策略

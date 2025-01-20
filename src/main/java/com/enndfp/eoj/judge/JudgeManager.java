@@ -4,7 +4,7 @@ import com.enndfp.eoj.judge.strategy.DefaultJudgeStrategy;
 import com.enndfp.eoj.judge.strategy.JavaLanguageJudgeStrategy;
 import com.enndfp.eoj.judge.strategy.JudgeContext;
 import com.enndfp.eoj.judge.strategy.JudgeStrategy;
-import com.enndfp.eoj.model.dto.questionsubmit.JudgeInfo;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.entity.QuestionSubmit;
 import org.springframework.stereotype.Service;
 
