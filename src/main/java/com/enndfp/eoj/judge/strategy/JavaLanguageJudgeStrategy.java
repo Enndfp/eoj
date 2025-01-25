@@ -1,14 +1,15 @@
 package com.enndfp.eoj.judge.strategy;
 
 import cn.hutool.json.JSONUtil;
+import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.dto.question.JudgeCase;
 import com.enndfp.eoj.model.dto.question.JudgeConfig;
-import com.enndfp.eoj.judge.codesandbox.model.JudgeInfo;
 import com.enndfp.eoj.model.entity.Question;
 import com.enndfp.eoj.model.enums.JudgeInfoMessageEnum;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Java语言判题策略
@@ -20,8 +21,8 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
     @Override
     public JudgeInfo doJudge(JudgeContext judgeContext) {
         JudgeInfo judgeInfo = judgeContext.getJudgeInfo();
-        Long time = judgeInfo.getTime();
-        Long memory = judgeInfo.getMemory();
+        Long time = Optional.ofNullable(judgeInfo.getTime()).orElse(0L);
+        Long memory = Optional.ofNullable(judgeInfo.getMemory()).orElse(0L);
         List<String> inputList = judgeContext.getInputList();
         List<String> outputList = judgeContext.getOutputList();
         List<JudgeCase> judgeCaseList = judgeContext.getJudgeCaseList();

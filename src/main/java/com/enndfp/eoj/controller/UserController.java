@@ -13,7 +13,6 @@ import com.enndfp.eoj.model.entity.User;
 import com.enndfp.eoj.model.vo.LoginUserVO;
 import com.enndfp.eoj.model.vo.UserVO;
 import com.enndfp.eoj.service.UserService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @RestController
-@Api(tags = "用户功能接口")
 @RequestMapping("/user")
 public class UserController {
 

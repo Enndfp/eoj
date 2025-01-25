@@ -22,7 +22,6 @@ import com.enndfp.eoj.model.vo.QuestionVO;
 import com.enndfp.eoj.service.QuestionService;
 import com.enndfp.eoj.service.QuestionSubmitService;
 import com.enndfp.eoj.service.UserService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +37,6 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@Api(tags = "题目功能接口")
 @RequestMapping("/question")
 public class QuestionController {
 
