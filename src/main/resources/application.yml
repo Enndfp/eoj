@@ -41,4 +41,4 @@ knife4j:
         api-rule-resources:
           - com.enndfp.eoj.controller
 codesandbox:
-  type: example
+  type: remote
