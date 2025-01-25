@@ -49,5 +49,4 @@ export type { UserUpdateRequest } from "./models/UserUpdateRequest";
 export type { UserVO } from "./models/UserVO";
 
 export { QuestionControllerService } from "./services/QuestionControllerService";
-export { QuestionSubmitControllerService } from "./services/QuestionSubmitControllerService";
 export { UserControllerService } from "./services/UserControllerService";

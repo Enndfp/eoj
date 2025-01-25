@@ -17,4 +17,3 @@ export type Question = {
   updateTime?: string;
   userId?: number;
 };
-

@@ -5,6 +5,7 @@
 import type { BaseResponse_boolean_ } from "../models/BaseResponse_boolean_";
 import type { BaseResponse_long_ } from "../models/BaseResponse_long_";
 import type { BaseResponse_Page_Question_ } from "../models/BaseResponse_Page_Question_";
+import type { BaseResponse_Page_QuestionSubmitVO_ } from "../models/BaseResponse_Page_QuestionSubmitVO_";
 import type { BaseResponse_Page_QuestionVO_ } from "../models/BaseResponse_Page_QuestionVO_";
 import type { BaseResponse_Question_ } from "../models/BaseResponse_Question_";
 import type { BaseResponse_QuestionVO_ } from "../models/BaseResponse_QuestionVO_";
@@ -12,6 +13,8 @@ import type { DeleteRequest } from "../models/DeleteRequest";
 import type { QuestionAddRequest } from "../models/QuestionAddRequest";
 import type { QuestionEditRequest } from "../models/QuestionEditRequest";
 import type { QuestionQueryRequest } from "../models/QuestionQueryRequest";
+import type { QuestionSubmitAddRequest } from "../models/QuestionSubmitAddRequest";
+import type { QuestionSubmitQueryRequest } from "../models/QuestionSubmitQueryRequest";
 import type { QuestionUpdateRequest } from "../models/QuestionUpdateRequest";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
@@ -35,8 +38,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -57,8 +60,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -79,8 +82,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -97,13 +100,13 @@ export class QuestionControllerService {
       method: "GET",
       url: "/api/question/get",
       query: {
-        "id": id
+        id: id,
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -120,13 +123,13 @@ export class QuestionControllerService {
       method: "GET",
       url: "/api/question/get/vo",
       query: {
-        "id": id
+        id: id,
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -147,8 +150,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -169,8 +172,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -191,8 +194,52 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
+    });
+  }
+
+  /**
+   * 提交题目
+   * @param questionSubmitAddRequest questionSubmitAddRequest
+   * @returns BaseResponse_long_ OK
+   * @returns any Created
+   * @throws ApiError
+   */
+  public static doQuestionSubmitUsingPost(
+    questionSubmitAddRequest: QuestionSubmitAddRequest
+  ): CancelablePromise<BaseResponse_long_ | any> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/question/question_submit/do",
+      body: questionSubmitAddRequest,
+      errors: {
+        401: `Unauthorized`,
+        403: `Forbidden`,
+        404: `Not Found`,
+      },
+    });
+  }
+
+  /**
+   * 分页获取题目提交列表（已脱敏）
+   * @param questionSubmitQueryRequest questionSubmitQueryRequest
+   * @returns BaseResponse_Page_QuestionSubmitVO_ OK
+   * @returns any Created
+   * @throws ApiError
+   */
+  public static listQuestionSubmitVoByPageUsingPost(
+    questionSubmitQueryRequest: QuestionSubmitQueryRequest
+  ): CancelablePromise<BaseResponse_Page_QuestionSubmitVO_ | any> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/question/question_submit/list/page",
+      body: questionSubmitQueryRequest,
+      errors: {
+        401: `Unauthorized`,
+        403: `Forbidden`,
+        404: `Not Found`,
+      },
     });
   }
 
@@ -213,8 +260,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 }

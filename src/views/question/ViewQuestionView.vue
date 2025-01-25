@@ -69,11 +69,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, withDefaults, defineProps } from "vue";
+import { defineProps, onMounted, ref, withDefaults } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
-  QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
@@ -94,7 +93,7 @@ interface Props {
 
 const doSubmit = async () => {
   if (!question.value?.id) return;
-  const res = await QuestionSubmitControllerService.doQuestionSubmitUsingPost({
+  const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
     questionId: question.value.id,
   });
