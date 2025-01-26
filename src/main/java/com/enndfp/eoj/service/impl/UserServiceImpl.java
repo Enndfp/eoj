@@ -2,6 +2,7 @@ package com.enndfp.eoj.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -92,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
-            user.setUserName(StringUtils.upperCase(userAccount));
+            user.setUserName(StrUtil.upperFirst(userAccount));
             user.setUserPassword(encryptPassword);
             user.setUserAvatar(DEFAULT_AVATAR_URL);
             boolean saveResult = this.save(user);

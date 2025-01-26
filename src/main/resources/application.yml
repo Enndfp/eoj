@@ -42,3 +42,11 @@ knife4j:
           - com.enndfp.eoj.controller
 codesandbox:
   type: remote
+# 阿里云对象存储
+aliyun:
+  oss:
+    file:
+      endpoint: oss-cn-guangzhou.aliyuncs.com
+      accessKeyId: LTAI5tAECxhHP7RJsSojaPmT
+      accessKeySecret: yedESTHHE6N3cuXWCyTlqOrsebiAH6
+      bucketName: enndfp-image
