@@ -17,6 +17,7 @@ export type { BaseResponse_Page_User_ } from "./models/BaseResponse_Page_User_";
 export type { BaseResponse_Page_UserVO_ } from "./models/BaseResponse_Page_UserVO_";
 export type { BaseResponse_Question_ } from "./models/BaseResponse_Question_";
 export type { BaseResponse_QuestionVO_ } from "./models/BaseResponse_QuestionVO_";
+export type { BaseResponse_string_ } from "./models/BaseResponse_string_";
 export type { BaseResponse_User_ } from "./models/BaseResponse_User_";
 export type { BaseResponse_UserVO_ } from "./models/BaseResponse_UserVO_";
 export type { DeleteRequest } from "./models/DeleteRequest";
@@ -48,5 +49,6 @@ export type { UserUpdateMyRequest } from "./models/UserUpdateMyRequest";
 export type { UserUpdateRequest } from "./models/UserUpdateRequest";
 export type { UserVO } from "./models/UserVO";
 
+export { FileControllerService } from "./services/FileControllerService";
 export { QuestionControllerService } from "./services/QuestionControllerService";
 export { UserControllerService } from "./services/UserControllerService";
