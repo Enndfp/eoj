@@ -3,25 +3,30 @@
     <a-layout style="min-height: 100vh">
       <a-layout-header class="header">
         <a-space>
-          <img class="logo" src="../assets/oj.png" />
+          <img class="logo" :src="systemLogo" />
         </a-space>
       </a-layout-header>
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="https://blog.enndfp.cn" target="_blank"
-          >Enndfp's Blog by Enndfp</a
-        >
+        <MyFooter />
       </a-layout-footer>
     </a-layout>
   </div>
 </template>
+
+<script setup lang="ts">
+import { SYSTEM_LOGO } from "@/constant";
+import MyFooter from "@/components/MyFooter.vue";
+
+const systemLogo = SYSTEM_LOGO;
+</script>
+
 <style scoped>
 #userLayout {
   text-align: center;
-  background: url(https://gw.alipayobjects.com/zos/rmsportal/FfdJeJRQWjEeGTpqgBKj.png)
-    0% 0% / 100% 100%;
+  background: url(@/assets/background.png) 0% 0% / 100% 100%;
 }
 
 #userLayout .logo {
@@ -39,7 +44,7 @@
 }
 
 #userLayout .footer {
-  padding: 14px;
+  padding: 6px;
   position: sticky;
   bottom: 0;
   right: 0;
@@ -47,4 +52,3 @@
   text-align: center;
 }
 </style>
-<script setup lang="ts"></script>
