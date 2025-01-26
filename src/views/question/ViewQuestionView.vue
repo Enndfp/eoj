@@ -74,7 +74,7 @@ import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
   QuestionVO,
-} from "../../../generated";
+} from "../../../backendAPI";
 import { Message } from "@arco-design/web-vue";
 import { useRouter } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
