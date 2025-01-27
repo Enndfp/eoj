@@ -1,8 +1,8 @@
 <template>
-  <div id="404page">
+  <div id="noAccessView">
     <div class="title">401 错误 !</div>
     <div class="images">
-      <img width="500" src="../assets/401.svg" />
+      <img width="500" src="../../assets/401.svg" />
     </div>
     <a-result
       :status="null"
@@ -10,7 +10,7 @@
     >
       <template #extra>
         <a-space>
-          <a-button class="back-404" type="primary" href="/">首页</a-button>
+          <a-button class="back-401" type="primary" href="/">首页</a-button>
         </a-space>
       </template>
     </a-result>
@@ -18,7 +18,7 @@
 </template>
 <script lang="ts" setup></script>
 <style scoped>
-#404page {
+#noAccessView {
 }
 
 .title {
@@ -35,7 +35,7 @@
   align-items: center;
 }
 
-.back-404 {
+.back-401 {
   border-radius: 10px;
 }
 </style>

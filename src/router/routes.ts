@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import NoAuthView from "@/views/NoAuthView.vue";
+import NoAccessView from "@/views/state/NoAccessView.vue";
 import AccessEnum from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
@@ -10,6 +10,8 @@ import QuestionsView from "@/views/question/QuestionsView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserInfoView from "@/views/user/UserInfoView.vue";
+import NotFoundView from "@/views/state/NotFoundView.vue";
+import UserManageView from "@/views/user/UserManageView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -38,17 +40,21 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/question",
-    name: "浏览题目",
+    path: "/",
+    name: "主页",
     component: QuestionsView,
   },
   {
     path: "/question_submit",
     name: "提交记录",
     component: QuestionSubmitView,
+    meta: {
+      hideInMenu: true,
+      access: AccessEnum.USER,
+    },
   },
   {
-    path: "/view/question/:id",
+    path: "/question/view/:id",
     name: "在线做题",
     props: true,
     component: ViewQuestionView,
@@ -58,15 +64,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/add/question",
+    path: "/question/add",
     name: "创建题目",
     component: AddQuestionView,
     meta: {
-      access: AccessEnum.USER,
+      access: AccessEnum.ADMIN,
     },
   },
   {
-    path: "/update/question",
+    path: "/question/update",
     name: "更新题目",
     component: AddQuestionView,
     meta: {
@@ -75,24 +81,39 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/manage/question",
-    name: "管理题目",
+    path: "/question/manage",
+    name: "题目管理",
     component: ManageQuestionView,
     meta: {
       access: AccessEnum.ADMIN,
     },
   },
   {
-    path: "/",
-    name: "主页",
-    component: QuestionsView,
+    path: "/user/manage",
+    name: "用户管理",
+    component: UserManageView,
+    meta: {
+      access: AccessEnum.ADMIN,
+    },
   },
   {
-    path: "/noAuth",
+    path: "/noAccess",
     name: "无权限",
-    component: NoAuthView,
+    component: NoAccessView,
     meta: {
       hideInMenu: true,
     },
+  },
+  {
+    path: "/notFound",
+    name: "未找到",
+    component: NotFoundView,
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/:pathMatch(.*)", // 匹配所有路由
+    redirect: "/notFound",
   },
 ];
