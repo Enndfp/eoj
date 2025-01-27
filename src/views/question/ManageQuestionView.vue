@@ -121,7 +121,7 @@ const doDelete = async (question: Question) => {
 };
 const doUpdate = (question: Question) => {
   router.push({
-    path: "/update/question",
+    path: "/question/update",
     query: {
       id: question.id,
     },

@@ -125,7 +125,7 @@ const onPageChange = (page: number) => {
 //跳转到做题页面
 const toQuestionPage = (question: Question) => {
   router.push({
-    path: `/view/question/${question.id}`,
+    path: `/question/view/${question.id}`,
   });
 };
 const doSubmit = () => {

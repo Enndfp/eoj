@@ -208,4 +208,8 @@ const onAnswerChange = (value: string) => {
   form.value.answer = value;
 };
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.bytemd-fullscreen.bytemd) {
+  z-index: 100;
+}
+</style>
