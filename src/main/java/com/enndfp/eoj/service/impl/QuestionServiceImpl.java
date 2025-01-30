@@ -3,6 +3,7 @@ package com.enndfp.eoj.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.enndfp.eoj.common.DeleteRequest;
@@ -338,8 +339,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
 
         // 处理标签字段
-        if (tags != null && !tags.isEmpty()) {
-            queryWrapper.in("tags", tags);
+        if (CollectionUtils.isNotEmpty(tags)) {
+            for (String tag : tags) {
+                queryWrapper.like("tags", "\"" + tag + "\"");
+            }
         }
 
         queryWrapper.like(StringUtils.isNotBlank(answer), "answer", answer);

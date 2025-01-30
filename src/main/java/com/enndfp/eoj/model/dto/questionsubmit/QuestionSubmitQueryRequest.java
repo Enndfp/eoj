@@ -21,6 +21,11 @@ public class QuestionSubmitQueryRequest extends PageRequest implements Serializa
     private String language;
 
     /**
+     * 题目标题
+     */
+    private String title;
+
+    /**
      * 提交状态
      */
     private Integer status;

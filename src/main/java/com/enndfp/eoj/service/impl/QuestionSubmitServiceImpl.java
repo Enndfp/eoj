@@ -153,6 +153,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
 
         // 提取查询参数
+        String title = questionSubmitQueryRequest.getTitle();
         String language = questionSubmitQueryRequest.getLanguage();
         Integer status = questionSubmitQueryRequest.getStatus();
         Long questionId = questionSubmitQueryRequest.getQuestionId();
@@ -161,6 +162,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         String sortOrder = questionSubmitQueryRequest.getSortOrder();
 
         // 拼接查询条件
+        // ✅ 题目名称模糊查询 (title 在 questionVO 表里)
+        if (StringUtils.isNotBlank(title)) {
+            queryWrapper.inSql("questionId", "SELECT id FROM question WHERE title LIKE '%" + title + "%'");
+        }
         queryWrapper.like(StringUtils.isNotBlank(language), "language", language);
         queryWrapper.like(ObjectUtils.allNotNull(QuestionSubmitStatusEnum.getEnumByValue(status)), "status", status);
         queryWrapper.eq(ObjectUtils.isNotEmpty(questionId), "questionId", questionId);
