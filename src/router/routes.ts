@@ -48,10 +48,6 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/question_submit",
     name: "提交记录",
     component: QuestionSubmitView,
-    meta: {
-      hideInMenu: true,
-      access: AccessEnum.USER,
-    },
   },
   {
     path: "/question/view/:id",
@@ -89,7 +85,7 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/user/manage",
+    path: "/manage/user",
     name: "用户管理",
     component: UserManageView,
     meta: {

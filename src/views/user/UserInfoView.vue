@@ -191,6 +191,5 @@ const onChange = async (_: never, currentFile: FileItem) => {
   padding: 10px;
   max-width: 820px;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(35, 7, 7, 0.21);
 }
 </style>

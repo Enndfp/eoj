@@ -347,7 +347,6 @@ const onChange = async (_: never, currentFile: FileItem) => {
 <style scoped>
 #userManageView {
   padding: 5px;
-  box-shadow: 0px 0px 10px rgba(35, 7, 7, 0.21);
   border-radius: 10px;
 }
 </style>
