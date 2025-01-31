@@ -1,35 +1,67 @@
 <template>
   <div id="userManageView">
-    <a-form
-      :model="searchParams"
-      layout="inline"
-      style="justify-content: center; align-content: center; margin: 25px"
-    >
-      <a-form-item field="title" label="用户编号：" tooltip="请输入用户的编号">
+    <!-- 🔹 搜索表单 -->
+    <a-form :model="searchParams" layout="inline" class="search-form bold-text">
+      <a-form-item
+        field="userName"
+        label="用户名称："
+        tooltip="请输入要搜索的用户名称"
+      >
+        <a-input v-model="searchParams.userName" placeholder="请输入用户名称" />
+      </a-form-item>
+      <a-form-item
+        field="userProfile"
+        label="用户简介："
+        tooltip="请输入要搜索的用户简介"
+      >
         <a-input
-          v-model="searchParams.id"
-          placeholder="请输入要搜索的用户编号"
+          v-model="searchParams.userProfile"
+          placeholder="请输入用户简介"
         />
       </a-form-item>
-      <a-form-item field="title" label="用户名称：" tooltip="请输入用户名称">
-        <a-input
-          v-model="searchParams.userName"
-          placeholder="请输入要搜索的用户名称"
-        />
+      <a-form-item
+        field="userRole"
+        label="用户角色："
+        tooltip="请选择要搜索的用户角色"
+      >
+        <a-select v-model="searchParams.userRole" placeholder="选择用户角色">
+          <!-- 普通用户和管理员的颜色标签 -->
+          <a-option value="user">
+            <a-tag color="arcoblue" class="bold-text">普通用户</a-tag>
+          </a-option>
+          <a-option value="admin">
+            <a-tag color="green" class="bold-text">管理员</a-tag>
+          </a-option>
+        </a-select>
       </a-form-item>
-      <a-form-item>
-        <a-button type="outline" shape="round" status="normal" @click="doSubmit"
-          >搜 索
+      <a-form-item class="button-group">
+        <a-button
+          type="outline"
+          shape="round"
+          status="normal"
+          @click="doSubmit"
+          class="bold-text"
+        >
+          搜 索
         </a-button>
       </a-form-item>
-      <a-form-item>
-        <a-button type="outline" shape="round" status="normal" @click="loadData"
-          >刷 新
+      <a-form-item class="button-group">
+        <a-button
+          type="primary"
+          shape="round"
+          @click="resetFilters"
+          class="bold-text"
+        >
+          重 置
         </a-button>
       </a-form-item>
     </a-form>
+
+    <a-divider dashed />
+
+    <!-- 🔹 用户记录表格 -->
     <a-table
-      :column-resizable="true"
+      column-resizable
       :ref="tableRef"
       :columns="columns"
       :data="dataList"
@@ -44,51 +76,82 @@
       @page-change="onPageChange"
       @pageSizeChange="onPageSizeChange"
     >
+      <!-- 用户头像 -->
       <template #userAvatar="{ record }">
         <a-avatar :size="70" shape="circle">
           <img alt="userAvatar" :src="record.userAvatar" />
         </a-avatar>
       </template>
+
+      <!-- 用户角色 -->
       <template #userRole="{ record }">
-        <!-- user普通用户 admin管理员 -->
-        <a-tag v-if="record.userRole === 'user'" color="arcoblue"
-          >普通用户
+        <!-- 用标签显示用户角色 -->
+        <a-tag
+          v-if="record.userRole === ACCESS_ENUM.USER"
+          color="arcoblue"
+          class="bold-text"
+        >
+          普通用户
         </a-tag>
-        <a-tag v-if="record.userRole === 'admin'" color="green">管理员</a-tag>
+        <a-tag
+          v-if="record.userRole === ACCESS_ENUM.ADMIN"
+          color="green"
+          class="bold-text"
+        >
+          管理员
+        </a-tag>
       </template>
+
+      <!-- 加粗时间信息 -->
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+        <span class="formatted-time bold-text">
+          {{ moment(record.createTime).format("YYYY-MM-DD HH:mm") }}
+        </span>
       </template>
+
       <template #updateTime="{ record }">
-        {{ moment(record.updateTime).format("YYYY-MM-DD HH:mm:ss") }}
+        <span class="formatted-time bold-text">
+          {{ moment(record.updateTime).format("YYYY-MM-DD HH:mm") }}
+        </span>
       </template>
+
+      <!-- 操作 -->
       <template #optional="{ record }">
         <a-space>
           <a-button
             shape="round"
             type="outline"
             @click="openModalForm(record.id)"
-            >修改
+            class="bold-text"
+          >
+            修改
           </a-button>
           <a-popconfirm
-            content="确定要删除此题目吗?"
+            content="确定要删除此用户吗?"
             type="error"
             okText="是"
             cancelText="否"
             @cancel="
               () => {
-                console.log(`已取消`);
+                console.log('已取消');
               }
             "
             @ok="doDelete(record)"
           >
-            <a-button shape="round" type="outline" status="danger"
-              >删除
+            <a-button
+              shape="round"
+              type="outline"
+              status="danger"
+              class="bold-text"
+            >
+              删除
             </a-button>
           </a-popconfirm>
         </a-space>
       </template>
     </a-table>
+
+    <!-- 🔹 个人信息修改模态框 -->
     <a-modal
       width="30%"
       :visible="visible"
@@ -97,7 +160,7 @@
       @cancel="closeModel"
       unmountOnClose
     >
-      <div style="text-align: center">
+      <div style="text-align: center; padding-bottom: 20px">
         <a-upload
           action="/"
           :fileList="file ? [file] : []"
@@ -112,25 +175,32 @@
           </template>
         </a-upload>
       </div>
-      <a-form
-        label-align="right"
-        title="个人信息"
-        style="max-width: 480px; margin: 0 auto"
-      >
-        <a-form-item field="名称" label="名称 :">
+
+      <a-form label-align="right" style="max-width: 480px; margin: 0 auto">
+        <a-form-item field="用户名称" label="用户名称 :" class="bold-text">
           <a-input v-model="userInfo.userName" placeholder="请输入用户名称" />
         </a-form-item>
-        <a-form-item field="账号" label="账号 :">
-          <a-input v-model="userInfo.userAccount" placeholder="请输入账号" />
+        <a-form-item field="用户账号" label="用户账号 :" class="bold-text">
+          <a-input
+            v-model="userInfo.userAccount"
+            placeholder="请输入用户账号"
+          />
         </a-form-item>
-        <a-form-item field="用户角色" label="角色 :">
-          <a-select v-model="userInfo.userRole" placeholder="请输入用户角色">
-            <a-option value="admin">管理员</a-option>
-            <a-option value="user">普通用户</a-option>
+        <a-form-item field="用户角色" label="用户角色 :" class="bold-text">
+          <a-select v-model="userInfo.userRole" placeholder="请选择用户角色">
+            <a-option value="user">
+              <a-tag color="arcoblue" class="bold-text">普通用户</a-tag>
+            </a-option>
+            <a-option value="admin">
+              <a-tag color="green" class="bold-text">管理员</a-tag>
+            </a-option>
           </a-select>
         </a-form-item>
-        <a-form-item field="userProfile" label="简介 :">
-          <a-textarea v-model="userInfo.userProfile" placeholder="请输入简介" />
+        <a-form-item field="用户简介" label="用户简介 :" class="bold-text">
+          <a-textarea
+            v-model="userInfo.userProfile"
+            placeholder="请输入用户简介"
+          />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -148,23 +218,24 @@ import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
 import { useRouter } from "vue-router";
 import { FileItem, Message } from "@arco-design/web-vue";
+import ACCESS_ENUM from "@/access/accessEnum";
 
 const router = useRouter();
 const tableRef = ref();
 const file = ref();
-
 const visible = ref(false);
 const userInfo = ref<User>();
-
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref({
-  id: undefined,
   userName: "",
+  userProfile: "",
+  userRole: "",
   pageSize: 10,
   current: 1,
 });
 
+// 加载用户数据
 const loadData = async () => {
   const res = await UserControllerService.listUserByPageUsingPost({
     ...searchParams.value,
@@ -179,107 +250,58 @@ const loadData = async () => {
   }
 };
 
-/**
- * 监听 searchParams 变量，改变时触发页面的重新加载
- */
+// 监听数据变化
 watchEffect(() => {
   loadData();
 });
 
-/**
- * 页面加载时，请求数据
- */
 onMounted(() => {
   loadData();
 });
 
+// 表格列配置
 const columns = [
-  {
-    title: "编号",
-    dataIndex: "id",
-    align: "center",
-  },
-  {
-    title: "账号",
-    dataIndex: "userAccount",
-    align: "center",
-  },
-  {
-    title: "名称",
-    dataIndex: "userName",
-    align: "center",
-  },
-  {
-    title: "头像",
-    slotName: "userAvatar",
-    align: "center",
-    width: 64,
-  },
-  {
-    title: "简介",
-    dataIndex: "userProfile",
-    align: "center",
-  },
-  {
-    title: "角色",
-    slotName: "userRole",
-    align: "center",
-  },
-  {
-    title: "创建时间",
-    slotName: "createTime",
-    align: "center",
-  },
-  {
-    title: "更新时间",
-    slotName: "updateTime",
-    align: "center",
-  },
-  {
-    title: "操作",
-    slotName: "optional",
-    align: "center",
-  },
+  { title: "用户账号", dataIndex: "userAccount", align: "center" },
+  { title: "用户名称", dataIndex: "userName", align: "center" },
+  { title: "用户头像", slotName: "userAvatar", align: "center", width: 64 },
+  { title: "用户简介", dataIndex: "userProfile", align: "center" },
+  { title: "用户角色", slotName: "userRole", align: "center" },
+  { title: "创建时间", slotName: "createTime", align: "center" },
+  { title: "更新时间", slotName: "updateTime", align: "center" },
+  { title: "操作", slotName: "optional", align: "center" },
 ];
-/**
- * 分页
- * @param page
- */
+
+// 分页操作
 const onPageChange = (page: number) => {
-  searchParams.value = {
-    ...searchParams.value,
-    current: page,
-  };
+  searchParams.value = { ...searchParams.value, current: page };
 };
 
-/**
- * 分页大小
- * @param size
- */
 const onPageSizeChange = (size: number) => {
-  searchParams.value = {
-    ...searchParams.value,
-    pageSize: size,
-  };
+  searchParams.value = { ...searchParams.value, pageSize: size };
 };
-/**
- * 打开弹窗,获取到用户信息
- */
+
+// 打开用户修改模态框
 const openModalForm = async (userId: any) => {
   const res = await UserControllerService.getUserByIdUsingGet(userId);
-  console.log("res:", res.data);
   userInfo.value = res.data;
-  console.log(userInfo.value);
   visible.value = true;
 };
-/**
- * 删除
- * @param user
- */
+
+// 重置搜索条件
+const resetFilters = () => {
+  searchParams.value = {
+    userName: "",
+    userProfile: "",
+    userRole: "",
+    pageSize: 10,
+    current: 1,
+  };
+  loadData();
+};
+
+// 删除用户
 const doDelete = async (user: User) => {
-  const res = await UserControllerService.deleteUserUsingPost({
-    id: user.id,
-  });
+  const res = await UserControllerService.deleteUserUsingPost({ id: user.id });
   if (res.code === 0) {
     message.success("删除成功");
     loadData();
@@ -288,23 +310,14 @@ const doDelete = async (user: User) => {
   }
 };
 
-/**
- * 确认搜索，重新加载数据
- */
+// 提交搜索请求
 const doSubmit = () => {
-  // 这里需要重置搜索页号
-  searchParams.value = {
-    ...searchParams.value,
-    current: 1,
-  };
+  searchParams.value = { ...searchParams.value, current: 1 };
 };
 
-// 从表单中获取的用户头像
+// 上传头像
 let userAvatarImg = userInfo.value?.userAvatar;
 
-/**
- * 上传头像
- */
 const uploadAvatar = async () => {
   const res = await FileControllerService.uploadAvatarUsingPost(
     file?.value.file
@@ -317,9 +330,7 @@ const uploadAvatar = async () => {
   }
 };
 
-/**
- * 确定修改按钮
- */
+// 更新用户信息
 const handleOk = async () => {
   const res = await UserControllerService.updateUserUsingPost({
     ...userInfo.value,
@@ -333,20 +344,51 @@ const handleOk = async () => {
     Message.error("更新失败！", res.msg);
   }
 };
+
+// 关闭模态框
 const closeModel = () => {
   visible.value = false;
 };
 
+// 获取上传的文件
 const onChange = async (_: never, currentFile: FileItem) => {
-  file.value = {
-    ...currentFile,
-  };
+  file.value = { ...currentFile };
 };
 </script>
 
-<style scoped>
+<style>
 #userManageView {
-  padding: 5px;
-  border-radius: 10px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.button-group {
+  margin-left: 10px;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+/*全局表格内容加粗*/
+.arco-table-td-content {
+  font-weight: bold;
+}
+
+.formatted-time {
+  font-weight: bold;
+  color: #333;
 }
 </style>

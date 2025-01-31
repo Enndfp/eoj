@@ -1,32 +1,67 @@
 <template>
   <div id="questionSubmitView">
     <!-- 🔹 搜索表单 -->
-    <a-form :model="searchParams" layout="inline" class="search-form">
-      <a-form-item field="title" label="题目名称：" tooltip="请输入题目名称">
+    <a-form :model="searchParams" layout="inline" class="search-form bold-text">
+      <a-form-item
+        field="title"
+        label="题目名称："
+        tooltip="请输入要搜索的题目名称"
+      >
         <a-input v-model="searchParams.title" placeholder="请输入题目名称" />
       </a-form-item>
-      <a-form-item field="language" label="编程语言：" tooltip="请选择编程语言">
+      <a-form-item
+        field="language"
+        label="编程语言："
+        tooltip="请选择要搜索的编程语言"
+      >
         <a-select v-model="searchParams.language" placeholder="选择编程语言">
-          <a-option>Java</a-option>
-          <a-option>C++</a-option>
-          <a-option>Go</a-option>
+          <a-option value="Java">
+            <a-tag color="#f89820" class="bold-text">Java</a-tag>
+          </a-option>
+          <a-option value="C++">
+            <a-tag color="#00599C" class="bold-text">C++</a-tag>
+          </a-option>
+          <a-option value="Go">
+            <a-tag color="#00ADD8" class="bold-text">Go</a-tag>
+          </a-option>
         </a-select>
       </a-form-item>
-      <a-form-item field="status" label="判题状态：" tooltip="请选择判题状态">
+      <a-form-item
+        field="status"
+        label="判题状态："
+        tooltip="请选择要搜索的判题状态"
+      >
         <a-select v-model="searchParams.status" placeholder="选择状态">
-          <a-option :value="0">待判题</a-option>
-          <a-option :value="1">判题中</a-option>
-          <a-option :value="2">成功</a-option>
-          <a-option :value="3">失败</a-option>
+          <a-option :value="0">
+            <a-tag color="cyan" class="bold-text">待判题</a-tag>
+          </a-option>
+          <a-option :value="1">
+            <a-tag color="gold" class="bold-text">判题中</a-tag>
+          </a-option>
+          <a-option :value="2">
+            <a-tag color="green" class="bold-text">成功</a-tag>
+          </a-option>
+          <a-option :value="3">
+            <a-tag color="red" class="bold-text">失败</a-tag>
+          </a-option>
         </a-select>
       </a-form-item>
       <a-form-item class="button-group">
-        <a-button type="outline" shape="round" status="normal" @click="doSubmit"
+        <a-button
+          type="outline"
+          shape="round"
+          status="normal"
+          @click="doSubmit"
+          class="bold-text"
           >搜索
         </a-button>
       </a-form-item>
       <a-form-item class="button-group">
-        <a-button type="primary" shape="round" @click="resetFilters"
+        <a-button
+          type="primary"
+          shape="round"
+          @click="resetFilters"
+          class="bold-text"
           >重置
         </a-button>
       </a-form-item>
@@ -168,6 +203,7 @@ import {
   QuestionSubmitQueryRequest,
 } from "../../../backendAPI";
 import { useStore } from "vuex";
+import AccessEnum from "@/access/accessEnum";
 
 const router = useRouter();
 const store = useStore();
@@ -250,7 +286,10 @@ const highlightedCode = ref("");
 
 /* 🔹 代码查看逻辑 */
 const showCode = (record: any) => {
-  if (loginUser.userRole !== "admin" && record.userId !== loginUser.id) {
+  if (
+    loginUser.userRole !== AccessEnum.ADMIN &&
+    record.userId !== loginUser.id
+  ) {
     Message.warning("您无权查看此代码");
     return;
   }
