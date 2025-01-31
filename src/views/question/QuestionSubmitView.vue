@@ -48,7 +48,7 @@
       </a-form-item>
       <a-form-item class="button-group">
         <a-button
-          type="outline"
+          type="primary"
           shape="round"
           status="normal"
           @click="doSubmit"
@@ -58,7 +58,7 @@
       </a-form-item>
       <a-form-item class="button-group">
         <a-button
-          type="primary"
+          type="outline"
           shape="round"
           @click="resetFilters"
           class="bold-text"

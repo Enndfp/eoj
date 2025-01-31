@@ -36,7 +36,7 @@
       </a-form-item>
       <a-form-item class="button-group">
         <a-button
-          type="outline"
+          type="primary"
           shape="round"
           status="normal"
           @click="doSubmit"
@@ -47,7 +47,7 @@
       </a-form-item>
       <a-form-item class="button-group">
         <a-button
-          type="primary"
+          type="outline"
           shape="round"
           @click="resetFilters"
           class="bold-text"
@@ -78,7 +78,7 @@
     >
       <!-- 用户头像 -->
       <template #userAvatar="{ record }">
-        <a-avatar :size="70" shape="circle">
+        <a-avatar :size="60" shape="circle">
           <img alt="userAvatar" :src="record.userAvatar" />
         </a-avatar>
       </template>
@@ -379,12 +379,18 @@ const onChange = async (_: never, currentFile: FileItem) => {
 }
 
 .bold-text {
-  font-weight: bold;
+  font-weight: bold !important;
 }
 
 /*全局表格内容加粗*/
 .arco-table-td-content {
   font-weight: bold;
+}
+
+.arco-modal-header .arco-modal-close-btn {
+  position: absolute;
+  right: 13px;
+  top: 14px;
 }
 
 .formatted-time {
