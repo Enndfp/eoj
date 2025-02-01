@@ -1,6 +1,7 @@
 package com.enndfp.eoj.model.vo;
 
 import cn.hutool.json.JSONUtil;
+import com.enndfp.eoj.model.dto.question.JudgeCase;
 import com.enndfp.eoj.model.dto.question.JudgeConfig;
 import com.enndfp.eoj.model.entity.Question;
 import lombok.Data;
@@ -39,6 +40,11 @@ public class QuestionVO implements Serializable {
     private List<String> tags;
 
     /**
+     * 题目答案
+     */
+    private String answer;
+
+    /**
      * 题目提交数
      */
     private Integer submitNum;
@@ -47,6 +53,11 @@ public class QuestionVO implements Serializable {
      * 题目通过数
      */
     private Integer acceptedNum;
+
+    /**
+     * 判题用例
+     */
+    private List<JudgeCase> judgeCase;
 
     /**
      * 判题配置
@@ -92,6 +103,10 @@ public class QuestionVO implements Serializable {
         if (tagList != null) {
             question.setTags(JSONUtil.toJsonStr(tagList));
         }
+        List<JudgeCase> judgeCaseVO = questionVO.getJudgeCase();
+        if (judgeCaseVO != null) {
+            question.setJudgeCase(JSONUtil.toJsonStr(judgeCaseVO));
+        }
         JudgeConfig judgeConfigVO = questionVO.getJudgeConfig();
         if (judgeConfigVO != null) {
             question.setJudgeConfig(JSONUtil.toJsonStr(judgeConfigVO));
@@ -117,6 +132,9 @@ public class QuestionVO implements Serializable {
         BeanUtils.copyProperties(question, questionVO);
         List<String> tagList = JSONUtil.toList(question.getTags(), String.class);
         questionVO.setTags(tagList);
+        String judgeCaseStr = question.getJudgeCase();
+        List<JudgeCase> judgeCases = JSONUtil.toList(judgeCaseStr, JudgeCase.class);
+        questionVO.setJudgeCase(judgeCases);
         String judgeConfigStr = question.getJudgeConfig();
         questionVO.setJudgeConfig(JSONUtil.toBean(judgeConfigStr, JudgeConfig.class));
 

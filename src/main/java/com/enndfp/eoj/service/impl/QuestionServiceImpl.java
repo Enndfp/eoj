@@ -331,6 +331,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         List<String> tags = questionQueryRequest.getTags();
         String answer = questionQueryRequest.getAnswer();
         Long userId = questionQueryRequest.getUserId();
+        String creator = questionQueryRequest.getCreator();
         String sortField = questionQueryRequest.getSortField();
         String sortOrder = questionQueryRequest.getSortOrder();
 
@@ -348,6 +349,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         queryWrapper.like(StringUtils.isNotBlank(answer), "answer", answer);
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        // 如果 creator 存在，使用子查询来通过 creator 查找 userId
+        if (StringUtils.isNotBlank(creator)) {
+            queryWrapper.inSql("userId", "SELECT id FROM user WHERE userName LIKE '%" + creator + "%'");
+        }
 
         // 假设 isDelete 字段用于标记是否删除
         queryWrapper.eq("isDelete", false);
