@@ -13,4 +13,5 @@ export type QuestionQueryRequest = {
   tags?: Array<string>;
   title?: string;
   userId?: number;
+  creator?: string;
 };

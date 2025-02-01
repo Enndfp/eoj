@@ -263,8 +263,14 @@ onMounted(() => {
 const columns = [
   { title: "用户账号", dataIndex: "userAccount", align: "center" },
   { title: "用户名称", dataIndex: "userName", align: "center" },
-  { title: "用户头像", slotName: "userAvatar", align: "center", width: 64 },
-  { title: "用户简介", dataIndex: "userProfile", align: "center" },
+  { title: "用户头像", slotName: "userAvatar", align: "center" },
+  {
+    title: "用户简介",
+    dataIndex: "userProfile",
+    align: "center",
+    ellipsis: true,
+    width: 180,
+  },
   { title: "用户角色", slotName: "userRole", align: "center" },
   { title: "创建时间", slotName: "createTime", align: "center" },
   { title: "更新时间", slotName: "updateTime", align: "center" },

@@ -10,6 +10,11 @@ const checkAccess = (loginUser: any, needAccess = AccessEnum.NOT_LOGIN) => {
   // 获取当前登录用户具有的权限（如果没有loginUser，则表示未登录）
   const loginUserAccess = loginUser?.userRole ?? AccessEnum.NOT_LOGIN;
 
+  // 如果是管理员，可以访问任何页面
+  if (loginUserAccess === AccessEnum.ADMIN) {
+    return true;
+  }
+
   // 访问的页面不需要权限就返回true
   if (needAccess === AccessEnum.NOT_LOGIN) {
     return true;

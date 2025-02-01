@@ -75,7 +75,7 @@
             </a-doption>
             <a-doption>
               <template #icon>
-                <icon-user />
+                <icon-user-add />
               </template>
               <template #default>
                 <a-anchor-link href="/user/register">注册</a-anchor-link>

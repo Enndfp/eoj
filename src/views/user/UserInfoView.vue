@@ -85,7 +85,7 @@
         type="outline"
         style="margin: 10px"
       >
-        <a-link @click="toIndex">首页</a-link>
+        <a-link @click="toIndex" class="bold-text">首页</a-link>
       </a-button>
       <!-- 修改用户信息按钮 -->
       <a-button
@@ -95,6 +95,7 @@
         type="outline"
         style="margin: 10px"
         @click="openModalForm"
+        class="bold-text"
       >
         修改用户信息
       </a-button>
@@ -235,5 +236,9 @@ const onChange = async (_: never, currentFile: FileItem) => {
 
 .arco-upload-list-picture-mask svg {
   fill: white;
+}
+
+.bold-text {
+  font-weight: bold;
 }
 </style>

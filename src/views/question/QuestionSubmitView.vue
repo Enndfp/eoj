@@ -132,17 +132,17 @@
               :color="getJudgeInfoColor(key, info)"
               class="bold-text"
             >
-              <span class="bold-text">{{ judgeInfoLabels[key] || key }}:</span>
+              <span class="bold-text">{{ judgeInfoLabels[key] || key }}：</span>
               {{
                 key === "memory"
-                  ? `${info} KB`
+                  ? `${info} `
                   : key === "time"
-                  ? `${info} ms`
+                  ? `${info}`
                   : info
               }}
             </a-tag>
             <a-tag v-else color="default">
-              <span class="bold-text">{{ judgeInfoLabels[key] || key }}:</span>
+              <span class="bold-text">{{ judgeInfoLabels[key] || key }}：</span>
               无数据
             </a-tag>
           </template>
@@ -179,7 +179,7 @@
     <!-- 🔹 代码查看模态框 -->
     <a-modal
       v-model:visible="isCodeModalVisible"
-      title="代码查看"
+      title="提交代码"
       width="850px"
       class="code-modal"
     >
@@ -276,8 +276,8 @@ const getJudgeInfoColor = (key: string, value: string) => {
 
 const judgeInfoLabels: Record<string, string> = {
   message: "结果",
-  time: "耗时",
-  memory: "内存",
+  time: "耗时(ms)",
+  memory: "内存(KB)",
 };
 
 /* 🔹 代码模态框 */
