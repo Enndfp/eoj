@@ -41,4 +41,8 @@ onMounted(() => {
 });
 </script>
 
-<style></style>
+<style>
+.bold-text {
+  font-weight: bold;
+}
+</style>

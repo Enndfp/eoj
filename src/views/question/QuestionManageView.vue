@@ -1,5 +1,5 @@
 <template>
-  <div id="manageQuestionView">
+  <div id="questionManageView">
     <!-- 🔹 搜索表单 -->
     <a-form :model="searchParams" layout="inline" class="search-form bold-text">
       <a-form-item
@@ -471,7 +471,7 @@ const doSubmit = () => {
 </script>
 
 <style scoped>
-#manageQuestionView {
+#questionManageView {
   max-width: 1280px;
   margin: 0 auto;
   padding: 20px;

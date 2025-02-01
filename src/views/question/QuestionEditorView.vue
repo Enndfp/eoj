@@ -1,78 +1,104 @@
 <template>
-  <div id="addQuestionView">
-    <div
-      style="
-        font-size: 32px;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 16px;
-      "
-    >
+  <div id="questionEditorView">
+    <div class="page-title">
+      <!-- 根据路由判断显示不同的标题 -->
       <template v-if="route.path.startsWith('/question/update')">
-        修改题目信息
+        修改题目
       </template>
       <template v-else>创建题目</template>
     </div>
+
+    <!-- 表单组件，包含题目信息与判题配置 -->
     <a-form
       :model="form"
       size="medium"
       label-align="left"
-      style="font-weight: bold; margin: 0 auto"
+      style="font-weight: bold; margin: 0 auto; max-width: 800px"
     >
+      <!-- 题目输入 -->
       <a-form-item
         field="title"
-        label="题目："
-        tooltip="建议填写题目"
+        label="题目名称："
+        tooltip="请填写题目名称"
         required
-        :rules="[{ required: true, message: '题目是必填的' }]"
+        :rules="[{ required: true, message: '题目名称是必填项！' }]"
+        style="margin-bottom: 20px"
       >
         <a-input
           v-model="form.title"
-          placeholder="请输入标题"
-          style="max-width: 500px"
+          placeholder="请输入题目名称"
+          style="max-width: 100%"
         />
       </a-form-item>
+
+      <!-- 题目标签 -->
       <a-form-item
         field="tags"
         label="题目标签："
+        tooltip="请选择题目标签"
         required
-        tooltip="建议填写题目标签"
+        :rules="[{ required: true, message: '题目标签是必填项！' }]"
+        style="margin-bottom: 20px"
       >
-        <a-input-tag
+        <a-select
           v-model="form.tags"
-          placeholder="请选择标签"
-          style="max-width: 500px"
-        />
+          placeholder="选择题目标签"
+          multiple
+          allow-clear
+          style="max-width: 100%"
+        >
+          <a-option
+            v-for="(tag, index) in tagOptions"
+            :key="index"
+            :value="tag.value"
+          >
+            <a-tag :color="tag.color" class="bold-text">{{ tag.label }}</a-tag>
+          </a-option>
+        </a-select>
       </a-form-item>
+
+      <!-- 题目内容 -->
       <a-form-item
         field="content"
         label="题目内容："
+        tooltip="请填写题目内容"
         required
-        tooltip="建议填写题目内容"
+        :rules="[{ required: true, message: '题目内容是必填项！' }]"
+        style="margin-bottom: 20px"
       >
         <MdEditor :value="form.content" :handle-change="onContentChange" />
       </a-form-item>
+
+      <!-- 题目答案 -->
       <a-form-item
         field="answer"
         label="题目答案："
+        tooltip="请填写题目答案"
         required
-        tooltip="建议填写题目答案"
+        :rules="[{ required: true, message: '题目答案是必填项！' }]"
+        style="margin-bottom: 20px"
       >
         <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
       </a-form-item>
-      <a-divider :margin="10" />
+
+      <!-- 判题配置 -->
+      <a-divider :margin="20" />
       <a-form-item
         label="判题配置："
+        tooltip="请填写判题配置"
         :content-flex="false"
         :merge-props="false"
         required
-        tooltip="建议填写判题配置"
+        :rules="[{ required: true, message: '判题配置是必填项！' }]"
+        style="margin-bottom: 20px"
       >
-        <a-space direction="vertical" style="min-width: 500px">
+        <a-space direction="vertical" style="min-width: 100%">
+          <!-- 时间限制 -->
           <a-form-item
             field="judgeConfig.timeLimit"
             label="时间限制："
-            tooltip="单位：ms（毫秒）"
+            tooltip="请输入时间限制（单位：ms）"
+            style="margin-bottom: 10px"
           >
             <a-input-number
               v-model="form.judgeConfig.timeLimit"
@@ -80,12 +106,16 @@
               mode="button"
               min="0"
               size="large"
+              style="width: 100%"
             />
           </a-form-item>
+
+          <!-- 内存限制 -->
           <a-form-item
             field="judgeConfig.memoryLimit"
             label="内存限制："
-            tooltip="单位：kb"
+            tooltip="请输入内存限制（单位：KB）"
+            style="margin-bottom: 10px"
           >
             <a-input-number
               v-model="form.judgeConfig.memoryLimit"
@@ -93,12 +123,16 @@
               mode="button"
               min="0"
               size="large"
+              style="width: 100%"
             />
           </a-form-item>
+
+          <!-- 堆栈限制 -->
           <a-form-item
             field="judgeConfig.stackLimit"
             label="堆栈限制："
-            tooltip="单位：KB"
+            tooltip="请输入堆栈限制（单位：KB）"
+            style="margin-bottom: 10px"
           >
             <a-input-number
               v-model="form.judgeConfig.stackLimit"
@@ -106,76 +140,102 @@
               mode="button"
               min="0"
               size="large"
+              style="width: 100%"
             />
           </a-form-item>
         </a-space>
       </a-form-item>
-      <a-divider :margin="10" />
+
+      <!-- 测试用例配置 -->
+      <a-divider :margin="20" />
       <a-form-item
         label="测试用例配置："
+        tooltip="请填写测试用例配置"
         :content-flex="false"
         :merge-props="false"
         required
-        tooltip="建议填写测试用例配置"
+        :rules="[{ required: true, message: '测试用例配置是必填项！' }]"
+        style="margin-bottom: 20px"
       >
+        <!-- 动态生成测试用例表单项 -->
         <a-form-item
           v-for="(judgeCaseItem, index) of form.judgeCase"
           :key="index"
           no-style
         >
-          <a-space direction="vertical" style="min-width: 650px">
+          <a-space
+            direction="vertical"
+            style="width: 100%; margin-bottom: 10px"
+          >
+            <!-- 输入用例 -->
             <a-form-item
               :field="`form.judgeCase[${index}].input`"
               :label="`第${index + 1}个输入用例:`"
-              :key="index"
-              tooltip="主要的输入用例"
+              tooltip="请输入测试输入用例（例如：输入数据）"
+              style="margin-bottom: 10px"
             >
               <a-input
                 v-model="judgeCaseItem.input"
                 placeholder="请输入测试输入用例"
+                style="width: 100%"
               />
             </a-form-item>
+
+            <!-- 输出用例 -->
             <a-form-item
               :field="`form.judgeCase[${index}].output`"
               :label="`第${index + 1}个输出用例:`"
-              :key="index"
-              tooltip="主要的输出用例"
+              tooltip="请输入测试输出用例（例如：预期结果）"
+              style="margin-bottom: 10px"
             >
               <a-input
                 v-model="judgeCaseItem.output"
                 placeholder="请输入测试输出用例"
+                style="width: 100%"
               />
             </a-form-item>
           </a-space>
+
+          <!-- 删除测试用例按钮 -->
           <a-space direction="vertical" size="large">
             <a-button
               type="outline"
               status="danger"
               @click="handleDelete(index)"
               shape="round"
+              class="bold-text"
             >
               删除用例
             </a-button>
           </a-space>
         </a-form-item>
-        <div style="margin-top: 5px">
+
+        <!-- 新增测试用例按钮 -->
+        <div style="margin-top: 10px">
           <a-button
             @click="handleAdd"
             type="outline"
             status="success"
             shape="round"
-            >新增测试用例
+            class="bold-text"
+            style="width: 100%"
+          >
+            新增测试用例
           </a-button>
         </div>
       </a-form-item>
-      <a-divider :margin="10" />
+
+      <!-- 提交按钮 -->
+      <a-divider :margin="20" />
       <a-form-item>
         <a-button
           type="primary"
-          style="min-width: 150px; margin: 0 215px"
+          style="width: 100%; min-width: 150px; margin-top: 20px"
           shape="round"
           @click="doSubmit"
-          >提交
+          class="bold-text"
+        >
+          {{ updatePage ? "提交并更新" : "提交并创建" }}
         </a-button>
       </a-form-item>
     </a-form>
@@ -191,9 +251,10 @@ import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
-// 如果页面地址包含 update，视为更新页面
+// 判断是否为更新页面
 const updatePage = route.path.includes("update");
 
+// 定义表单模型
 let form = ref({
   title: "",
   tags: [],
@@ -212,8 +273,20 @@ let form = ref({
   ],
 });
 
+// 定义标签选项
+const tagOptions = [
+  { value: "栈", label: "栈", color: "blue" },
+  { value: "链表", label: "链表", color: "pink" },
+  { value: "二叉树", label: "二叉树", color: "teal" },
+  { value: "图", label: "图", color: "purple" },
+  { value: "动态规划", label: "动态规划", color: "cyan" },
+  { value: "简单", label: "简单", color: "green" },
+  { value: "中等", label: "中等", color: "orange" },
+  { value: "困难", label: "困难", color: "red" },
+];
+
 /**
- * 根据题目 id 获取旧的数据
+ * 加载编辑页面数据
  */
 const loadData = async () => {
   const id = route.query.id;
@@ -225,31 +298,19 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     form.value = res.data as any;
-    // json 转 js 对象
-    if (!form.value.judgeCase) {
-      form.value.judgeCase = [
-        {
-          input: "",
-          output: "",
-        },
-      ];
-    } else {
-      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
-    }
-    if (!form.value.judgeConfig) {
-      form.value.judgeConfig = {
-        memoryLimit: 1000,
-        stackLimit: 1000,
-        timeLimit: 1000,
-      };
-    } else {
-      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
-    }
-    if (!form.value.tags) {
-      form.value.tags = [];
-    } else {
-      form.value.tags = JSON.parse(form.value.tags as any);
-    }
+
+    // 处理 judgeCase 和 judgeConfig 的初始化
+    form.value.judgeCase = form.value.judgeCase
+      ? JSON.parse(form.value.judgeCase as any)
+      : [{ input: "", output: "" }];
+    form.value.judgeConfig = form.value.judgeConfig
+      ? JSON.parse(form.value.judgeConfig as any)
+      : {
+          memoryLimit: 1000,
+          stackLimit: 1000,
+          timeLimit: 1000,
+        };
+    form.value.tags = form.value.tags ? JSON.parse(form.value.tags as any) : [];
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -260,22 +321,16 @@ onMounted(() => {
 });
 
 /**
- * 提交
+ * 提交表单数据
  */
 const doSubmit = async () => {
-  console.log(form.value);
-  // 区分更新还是创建
   if (updatePage) {
     const res = await QuestionControllerService.updateQuestionUsingPost(
       form.value
     );
     if (res.code === 0) {
-      // 更新成功则返回到管理界面
       message.success("更新成功");
-      await router.push({
-        path: "/question/manage",
-        replace: true,
-      });
+      await router.push({ path: "/question/manage", replace: true });
     } else {
       message.error("更新失败，" + res.message);
     }
@@ -285,12 +340,15 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("创建成功");
-      // 添加成功后清空
-      form.value.answer = "";
-      form.value.tags = [];
-      form.value.judgeCase = [];
-      form.value.content = "";
-      form.value.title = "";
+      // 创建成功后清空表单
+      form.value = {
+        title: "",
+        tags: [],
+        answer: "",
+        content: "",
+        judgeConfig: { memoryLimit: 1000, stackLimit: 1000, timeLimit: 1000 },
+        judgeCase: [{ input: "", output: "" }],
+      };
     } else {
       message.error("创建失败，" + res.message);
     }
@@ -301,10 +359,7 @@ const doSubmit = async () => {
  * 新增判题用例
  */
 const handleAdd = () => {
-  form.value.judgeCase.push({
-    input: "",
-    output: "",
-  });
+  form.value.judgeCase.push({ input: "", output: "" });
 };
 
 /**
@@ -324,17 +379,20 @@ const onAnswerChange = (value: string) => {
 </script>
 
 <style scoped>
-#addQuestionView {
-  margin: 0 auto;
-  padding: 10px;
+#questionEditorView {
   max-width: 1000px;
-  background: linear-gradient(to right, #efefef, #fff, #efefef);
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(35, 7, 7, 0.21);
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.arco-form-item-label-col-left {
-  justify-content: flex-end;
+.page-title {
+  font-size: 32px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 :deep(.bytemd-fullscreen.bytemd) {

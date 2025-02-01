@@ -4,8 +4,9 @@ import AccessEnum from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
-import AddQuestionView from "@/views/question/AddQuestionView.vue";
-import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import AddQuestionView from "@/views/question/QuestionEditorView.vue";
+import QuestionEditorView from "@/views/question/QuestionEditorView.vue";
+import QuestionManageView from "@/views/question/QuestionManageView.vue";
 import QuestionsView from "@/views/question/QuestionsView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
@@ -65,7 +66,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/question/add",
     name: "创建题目",
-    component: AddQuestionView,
+    component: QuestionEditorView,
     meta: {
       access: AccessEnum.ADMIN,
     },
@@ -82,7 +83,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/question/manage",
     name: "题目管理",
-    component: ManageQuestionView,
+    component: QuestionManageView,
     meta: {
       access: AccessEnum.ADMIN,
     },

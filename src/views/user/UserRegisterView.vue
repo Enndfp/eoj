@@ -54,6 +54,7 @@
         type="secondary"
         status="success"
         @click="toIndex"
+        class="bold-text"
       >
         首 页
       </a-button>
@@ -64,6 +65,7 @@
         type="primary"
         html-type="submit"
         @click="handleSubmit"
+        class="bold-text"
       >
         注 册
       </a-button>
@@ -73,6 +75,7 @@
         type="outline"
         status="success"
         @click="toLogin"
+        class="bold-text"
       >
         登 录
       </a-button>
