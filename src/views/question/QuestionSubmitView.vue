@@ -353,7 +353,7 @@ const onPageSizeChange = (size: number) => {
 
 /* 🔹 页面跳转 */
 const toQuestionPage = (questionId: string) => {
-  router.push({ path: `/question/view/${questionId}` });
+  router.push({ path: `/question/practice/${questionId}` });
 };
 
 /* 🔹 触发搜索 */

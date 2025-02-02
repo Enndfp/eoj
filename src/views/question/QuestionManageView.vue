@@ -22,38 +22,9 @@
           allow-clear
           style="min-width: 150px"
         >
-          <a-option value="栈">
-            <a-tag color="darkslateblue" class="bold-text">栈</a-tag>
-          </a-option>
-          <a-option value="图">
-            <a-tag color="darkseagreen" class="bold-text">图</a-tag>
-          </a-option>
-          <a-option value="数组">
-            <a-tag color="darkgoldenrod" class="bold-text">数组</a-tag>
-          </a-option>
-          <a-option value="链表">
-            <a-tag color="darkmagenta" class="bold-text">链表</a-tag>
-          </a-option>
-          <a-option value="排序">
-            <a-tag color="darkorange" class="bold-text">排序</a-tag>
-          </a-option>
-          <a-option value="哈希表">
-            <a-tag color="salmon" class="bold-text">哈希表</a-tag>
-          </a-option>
-          <a-option value="字符串">
-            <a-tag color="darkkhaki" class="bold-text">字符串</a-tag>
-          </a-option>
-          <a-option value="二叉树">
-            <a-tag color="teal" class="bold-text">二叉树</a-tag>
-          </a-option>
-          <a-option value="双指针">
-            <a-tag color="skyblue" class="bold-text">双指针</a-tag>
-          </a-option>
-          <a-option value="动态规划">
-            <a-tag color="pink" class="bold-text">动态规划</a-tag>
-          </a-option>
-          <a-option value="滑动窗口">
-            <a-tag color="indigo" class="bold-text">滑动窗口</a-tag>
+          <!-- 选择不同的标签 -->
+          <a-option v-for="tag in tags" :key="tag.value" :value="tag.value">
+            <a-tag :color="tag.color" class="bold-text">{{ tag.name }}</a-tag>
           </a-option>
         </a-select>
       </a-form-item>
@@ -143,7 +114,7 @@
 
       <!-- 题目标签 -->
       <template #tags="{ record }">
-        <a-space wrap>
+        <a-space>
           <a-tag
             v-for="(tag, index) in record.tags"
             :key="index"
@@ -383,6 +354,19 @@ const formatDate = (date: string) => {
   return date ? moment(date).format("YYYY-MM-DD HH:mm") : "";
 };
 
+const tags = [
+  { value: "栈", name: "栈", color: "darkslateblue" },
+  { value: "图", name: "图", color: "darkseagreen" },
+  { value: "数组", name: "数组", color: "darkgoldenrod" },
+  { value: "链表", name: "链表", color: "darkmagenta" },
+  { value: "排序", name: "排序", color: "darkorange" },
+  { value: "哈希表", name: "哈希表", color: "salmon" },
+  { value: "字符串", name: "字符串", color: "darkkhaki" },
+  { value: "二叉树", name: "二叉树", color: "teal" },
+  { value: "双指针", name: "双指针", color: "steelblue" },
+  { value: "动态规划", name: "动态规划", color: "chocolate" },
+  { value: "滑动窗口", name: "滑动窗口", color: "indigo" },
+];
 // 🔹 获取题目标签的颜色
 const getTagColor = (tag: string) => {
   switch (tag) {
@@ -403,9 +387,9 @@ const getTagColor = (tag: string) => {
     case "二叉树":
       return "teal";
     case "双指针":
-      return "skyblue";
+      return "steelblue";
     case "动态规划":
-      return "pink";
+      return "chocolate";
     case "滑动窗口":
       return "indigo";
     default:
@@ -479,9 +463,17 @@ const columns = [
     dataIndex: "content",
     align: "center",
     ellipsis: true,
+    tooltip: true,
     width: 250,
   },
-  { title: "题目标签", slotName: "tags", align: "center", width: 150 },
+  {
+    title: "题目标签",
+    slotName: "tags",
+    align: "center",
+    ellipsis: true,
+    tooltip: true,
+    width: 250,
+  },
   { title: "题目难度", slotName: "difficulty", align: "center", width: 100 },
   { title: "题目答案", slotName: "answer", align: "center", width: 120 },
   { title: "提交数", dataIndex: "submitNum", align: "center", width: 100 },

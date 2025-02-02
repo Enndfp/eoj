@@ -4,11 +4,10 @@ import AccessEnum from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
-import AddQuestionView from "@/views/question/QuestionEditorView.vue";
 import QuestionEditorView from "@/views/question/QuestionEditorView.vue";
 import QuestionManageView from "@/views/question/QuestionManageView.vue";
-import QuestionsView from "@/views/question/QuestionsView.vue";
-import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
+import QuestionBankView from "@/views/question/QuestionBankView.vue";
+import QuestionPracticeView from "@/views/question/QuestionPracticeView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserInfoView from "@/views/user/UserInfoView.vue";
 import NotFoundView from "@/views/state/NotFoundView.vue";
@@ -42,8 +41,8 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    name: "主页",
-    component: QuestionsView,
+    name: "题库",
+    component: QuestionBankView,
   },
   {
     path: "/question_submit",
@@ -54,10 +53,10 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/question/view/:id",
+    path: "/question/practice/:id",
     name: "在线做题",
     props: true,
-    component: ViewQuestionView,
+    component: QuestionPracticeView,
     meta: {
       hideInMenu: true,
       access: AccessEnum.USER,
@@ -74,7 +73,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/question/update",
     name: "更新题目",
-    component: AddQuestionView,
+    component: QuestionEditorView,
     meta: {
       hideInMenu: true,
       access: AccessEnum.USER,

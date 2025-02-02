@@ -57,6 +57,32 @@
         </a-select>
       </a-form-item>
 
+      <!-- 题目难度 -->
+      <a-form-item
+        field="difficulty"
+        label="题目难度："
+        tooltip="请选择题目难度"
+        required
+        :rules="[{ required: true, message: '题目难度是必填项！' }]"
+        style="margin-bottom: 20px"
+      >
+        <a-select
+          v-model="form.difficulty"
+          placeholder="选择题目难度"
+          style="max-width: 100%"
+        >
+          <a-option
+            v-for="(difficulty, index) in difficultyOptions"
+            :key="index"
+            :value="difficulty.value"
+          >
+            <a-tag :color="difficulty.color" class="bold-text"
+              >{{ difficulty.label }}
+            </a-tag>
+          </a-option>
+        </a-select>
+      </a-form-item>
+
       <!-- 题目内容 -->
       <a-form-item
         field="content"
@@ -146,18 +172,18 @@
         </a-space>
       </a-form-item>
 
-      <!-- 测试用例配置 -->
+      <!-- 判题用例配置 -->
       <a-divider :margin="20" />
       <a-form-item
-        label="测试用例配置："
-        tooltip="请填写测试用例配置"
+        label="判题用例配置："
+        tooltip="请填写判题用例配置"
         :content-flex="false"
         :merge-props="false"
         required
-        :rules="[{ required: true, message: '测试用例配置是必填项！' }]"
+        :rules="[{ required: true, message: '判题用例配置是必填项！' }]"
         style="margin-bottom: 20px"
       >
-        <!-- 动态生成测试用例表单项 -->
+        <!-- 动态生成判题用例表单项 -->
         <a-form-item
           v-for="(judgeCaseItem, index) of form.judgeCase"
           :key="index"
@@ -171,12 +197,12 @@
             <a-form-item
               :field="`form.judgeCase[${index}].input`"
               :label="`第${index + 1}个输入用例:`"
-              tooltip="请输入测试输入用例（例如：输入数据）"
+              tooltip="请输入测试的输入用例（例如：输入数据）"
               style="margin-bottom: 10px"
             >
               <a-input
                 v-model="judgeCaseItem.input"
-                placeholder="请输入测试输入用例"
+                placeholder="请输入测试的输入用例"
                 style="width: 100%"
               />
             </a-form-item>
@@ -185,19 +211,19 @@
             <a-form-item
               :field="`form.judgeCase[${index}].output`"
               :label="`第${index + 1}个输出用例:`"
-              tooltip="请输入测试输出用例（例如：预期结果）"
+              tooltip="请输入测试的输出用例（例如：预期结果）"
               style="margin-bottom: 10px"
             >
               <a-input
                 v-model="judgeCaseItem.output"
-                placeholder="请输入测试输出用例"
+                placeholder="请输入测试的输出用例"
                 style="width: 100%"
               />
             </a-form-item>
           </a-space>
 
           <!-- 删除测试用例按钮 -->
-          <a-space direction="vertical" size="large">
+          <a-space size="large">
             <a-button
               type="outline"
               status="danger"
@@ -260,6 +286,7 @@ let form = ref({
   tags: [],
   answer: "",
   content: "",
+  difficulty: "",
   judgeConfig: {
     memoryLimit: 1000,
     stackLimit: 1000,
@@ -275,14 +302,23 @@ let form = ref({
 
 // 定义标签选项
 const tagOptions = [
-  { value: "栈", label: "栈", color: "blue" },
-  { value: "链表", label: "链表", color: "pink" },
+  { value: "栈", label: "栈", color: "darkslateblue" },
+  { value: "图", label: "图", color: "darkseagreen" },
+  { value: "数组", label: "数组", color: "darkgoldenrod" },
+  { value: "链表", label: "链表", color: "darkmagenta" },
+  { value: "排序", label: "排序", color: "darkorange" },
+  { value: "哈希表", label: "哈希表", color: "salmon" },
+  { value: "字符串", label: "字符串", color: "darkkhaki" },
   { value: "二叉树", label: "二叉树", color: "teal" },
-  { value: "图", label: "图", color: "purple" },
-  { value: "动态规划", label: "动态规划", color: "cyan" },
-  { value: "简单", label: "简单", color: "green" },
-  { value: "中等", label: "中等", color: "orange" },
-  { value: "困难", label: "困难", color: "red" },
+  { value: "双指针", label: "双指针", color: "steelblue" },
+  { value: "动态规划", label: "动态规划", color: "chocolate" },
+  { value: "滑动窗口", label: "滑动窗口", color: "indigo" },
+];
+// 定义题目难度选项
+const difficultyOptions = [
+  { value: 0, label: "简单", color: "green" },
+  { value: 1, label: "中等", color: "orange" },
+  { value: 2, label: "困难", color: "red" },
 ];
 
 /**
@@ -346,6 +382,7 @@ const doSubmit = async () => {
         tags: [],
         answer: "",
         content: "",
+        difficulty: "",
         judgeConfig: { memoryLimit: 1000, stackLimit: 1000, timeLimit: 1000 },
         judgeCase: [{ input: "", output: "" }],
       };
@@ -377,7 +414,6 @@ const onAnswerChange = (value: string) => {
   form.value.answer = value;
 };
 </script>
-
 <style scoped>
 #questionEditorView {
   max-width: 1000px;

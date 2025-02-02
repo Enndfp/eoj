@@ -269,6 +269,7 @@ const columns = [
     dataIndex: "userProfile",
     align: "center",
     ellipsis: true,
+    tooltip: true,
     width: 180,
   },
   { title: "用户角色", slotName: "userRole", align: "center" },
