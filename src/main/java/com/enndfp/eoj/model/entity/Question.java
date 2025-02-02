@@ -51,6 +51,11 @@ public class Question implements Serializable {
     private Integer acceptedNum;
 
     /**
+     * 题目难度（0 - 简单、1 - 中等、2 - 困难）
+     */
+    private Integer difficulty;
+
+    /**
      * 判题用例（json 数组）
      */
     private String judgeCase;

@@ -330,6 +330,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         String content = questionQueryRequest.getContent();
         List<String> tags = questionQueryRequest.getTags();
         String answer = questionQueryRequest.getAnswer();
+        Integer difficulty = questionQueryRequest.getDifficulty();
         Long userId = questionQueryRequest.getUserId();
         String creator = questionQueryRequest.getCreator();
         String sortField = questionQueryRequest.getSortField();
@@ -347,6 +348,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         }
 
         queryWrapper.like(StringUtils.isNotBlank(answer), "answer", answer);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(difficulty), "difficulty", difficulty);
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         // 如果 creator 存在，使用子查询来通过 creator 查找 userId

@@ -39,6 +39,11 @@ public class QuestionEditRequest implements Serializable {
     private String answer;
 
     /**
+     * 题目难度（0 - 简单、1 - 中等、2 - 困难）
+     */
+    private Integer difficulty;
+
+    /**
      * 判题用例
      */
     private List<JudgeCase> judgeCase;

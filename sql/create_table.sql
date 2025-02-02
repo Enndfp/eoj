@@ -31,6 +31,7 @@ create table if not exists question
     answer      text                               null comment '题目答案',
     submitNum   int      default 0                 not null comment '题目提交数',
     acceptedNum int      default 0                 not null comment '题目通过数',
+    difficulty  int      default 0                 not null comment '题目难度（0 - 简单、1 - 中等、2 - 困难）',
     judgeCase   text                               null comment '判题用例（json 数组）',
     judgeConfig text                               null comment '判题配置（json 对象）',
     userId      bigint                             not null comment '创建用户 id',
