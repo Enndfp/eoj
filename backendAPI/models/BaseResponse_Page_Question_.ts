@@ -1,4 +1,4 @@
-/* backendAPI using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -9,3 +9,4 @@ export type BaseResponse_Page_Question_ = {
   data?: Page_Question_;
   message?: string;
 };
+

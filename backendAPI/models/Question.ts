@@ -1,4 +1,4 @@
-/* backendAPI using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -7,6 +7,7 @@ export type Question = {
   answer?: string;
   content?: string;
   createTime?: string;
+  difficulty?: number;
   id?: number;
   isDelete?: number;
   judgeCase?: string;
@@ -17,3 +18,4 @@ export type Question = {
   updateTime?: string;
   userId?: number;
 };
+

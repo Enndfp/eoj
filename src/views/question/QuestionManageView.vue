@@ -11,14 +11,6 @@
       </a-form-item>
 
       <a-form-item
-        field="content"
-        label="题目内容："
-        tooltip="请输入要搜索的题目内容"
-      >
-        <a-input v-model="searchParams.content" placeholder="请输入题目内容" />
-      </a-form-item>
-
-      <a-form-item
         field="tags"
         label="题目标签："
         tooltip="请选择要搜索的题目标签"
@@ -31,27 +23,58 @@
           style="min-width: 150px"
         >
           <a-option value="栈">
-            <a-tag color="blue" class="bold-text">栈</a-tag>
+            <a-tag color="darkslateblue" class="bold-text">栈</a-tag>
+          </a-option>
+          <a-option value="图">
+            <a-tag color="darkseagreen" class="bold-text">图</a-tag>
+          </a-option>
+          <a-option value="数组">
+            <a-tag color="darkgoldenrod" class="bold-text">数组</a-tag>
           </a-option>
           <a-option value="链表">
-            <a-tag color="pink" class="bold-text">链表</a-tag>
+            <a-tag color="darkmagenta" class="bold-text">链表</a-tag>
+          </a-option>
+          <a-option value="排序">
+            <a-tag color="darkorange" class="bold-text">排序</a-tag>
+          </a-option>
+          <a-option value="哈希表">
+            <a-tag color="salmon" class="bold-text">哈希表</a-tag>
+          </a-option>
+          <a-option value="字符串">
+            <a-tag color="darkkhaki" class="bold-text">字符串</a-tag>
           </a-option>
           <a-option value="二叉树">
             <a-tag color="teal" class="bold-text">二叉树</a-tag>
           </a-option>
-          <a-option value="图">
-            <a-tag color="purple" class="bold-text">图</a-tag>
+          <a-option value="双指针">
+            <a-tag color="skyblue" class="bold-text">双指针</a-tag>
           </a-option>
           <a-option value="动态规划">
-            <a-tag color="cyan" class="bold-text">动态规划</a-tag>
+            <a-tag color="pink" class="bold-text">动态规划</a-tag>
           </a-option>
-          <a-option value="简单">
+          <a-option value="滑动窗口">
+            <a-tag color="indigo" class="bold-text">滑动窗口</a-tag>
+          </a-option>
+        </a-select>
+      </a-form-item>
+
+      <a-form-item
+        field="difficulty"
+        label="题目难度："
+        tooltip="请选择要搜索的题目难度"
+      >
+        <a-select
+          v-model="searchParams.difficulty"
+          placeholder="选择题目难度"
+          style="min-width: 150px"
+        >
+          <a-option value="0">
             <a-tag color="green" class="bold-text">简单</a-tag>
           </a-option>
-          <a-option value="中等">
+          <a-option value="1">
             <a-tag color="orange" class="bold-text">中等</a-tag>
           </a-option>
-          <a-option value="困难">
+          <a-option value="2">
             <a-tag color="red" class="bold-text">困难</a-tag>
           </a-option>
         </a-select>
@@ -130,6 +153,13 @@
             {{ tag }}
           </a-tag>
         </a-space>
+      </template>
+
+      <!-- 题目难度 -->
+      <template #difficulty="{ record }">
+        <a-tag :color="getDifficultyColor(record.difficulty)" class="bold-text">
+          {{ getDifficultyLabel(record.difficulty) }}
+        </a-tag>
       </template>
 
       <!-- 题目答案展示 -->
@@ -282,8 +312,8 @@ const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
-  content: "",
   tags: [],
+  difficulty: undefined,
   creator: "",
   pageSize: 10,
   current: 1,
@@ -331,8 +361,8 @@ const loadData = async () => {
 const resetFilters = () => {
   searchParams.value = {
     title: "",
-    content: "",
     tags: [],
+    difficulty: undefined,
     creator: "",
     pageSize: 10,
     current: 1,
@@ -357,23 +387,57 @@ const formatDate = (date: string) => {
 const getTagColor = (tag: string) => {
   switch (tag) {
     case "栈":
-      return "blue";
+      return "darkslateblue";
+    case "图":
+      return "darkseagreen";
+    case "数组":
+      return "darkgoldenrod";
     case "链表":
-      return "pink";
+      return "darkmagenta";
+    case "排序":
+      return "darkorange";
+    case "哈希表":
+      return "salmon";
+    case "字符串":
+      return "darkkhaki";
     case "二叉树":
       return "teal";
-    case "图":
-      return "purple";
+    case "双指针":
+      return "skyblue";
     case "动态规划":
-      return "cyan";
-    case "简单":
-      return "green";
-    case "中等":
-      return "orange";
-    case "困难":
-      return "red";
+      return "pink";
+    case "滑动窗口":
+      return "indigo";
     default:
       return "gray";
+  }
+};
+
+// 获取题目难度标签颜色
+const getDifficultyColor = (difficulty: number) => {
+  switch (difficulty) {
+    case 0:
+      return "green"; // 简单
+    case 1:
+      return "orange"; // 中等
+    case 2:
+      return "red"; // 困难
+    default:
+      return "gray"; // 默认
+  }
+};
+
+// 获取题目难度标签名称
+const getDifficultyLabel = (difficulty: number) => {
+  switch (difficulty) {
+    case 0:
+      return "简单";
+    case 1:
+      return "中等";
+    case 2:
+      return "困难";
+    default:
+      return "未知";
   }
 };
 
@@ -418,6 +482,7 @@ const columns = [
     width: 250,
   },
   { title: "题目标签", slotName: "tags", align: "center", width: 150 },
+  { title: "题目难度", slotName: "difficulty", align: "center", width: 100 },
   { title: "题目答案", slotName: "answer", align: "center", width: 120 },
   { title: "提交数", dataIndex: "submitNum", align: "center", width: 100 },
   { title: "通过数", dataIndex: "acceptedNum", align: "center", width: 100 },
@@ -460,7 +525,7 @@ const doUpdate = (question: Question) => {
 
 /* 🔹 页面跳转 */
 const toQuestionPage = (questionId: string) => {
-  router.push({ path: `/question/view/${questionId}` });
+  router.push({ path: `/question/practice/${questionId}` });
 };
 
 // 🔹 提交搜索

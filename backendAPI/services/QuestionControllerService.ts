@@ -1,4 +1,4 @@
-/* backendAPI using openapi-typescript-codegen -- do not edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -38,8 +38,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -60,8 +60,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -82,8 +82,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -100,13 +100,13 @@ export class QuestionControllerService {
       method: "GET",
       url: "/api/question/get",
       query: {
-        id: id,
+        "id": id
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -123,13 +123,13 @@ export class QuestionControllerService {
       method: "GET",
       url: "/api/question/get/vo",
       query: {
-        id: id,
+        "id": id
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -150,8 +150,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -172,8 +172,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -194,8 +194,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -216,8 +216,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -238,8 +238,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 
@@ -260,8 +260,8 @@ export class QuestionControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`,
-      },
+        404: `Not Found`
+      }
     });
   }
 }
