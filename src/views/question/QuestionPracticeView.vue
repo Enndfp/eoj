@@ -78,8 +78,33 @@
       <a-col :md="12" :xs="24">
         <a-card>
           <!-- 编程语言选择和主题选择放一起，并增加间隔 -->
-          <a-row :gutter="16" style="margin-bottom: 0px">
-            <a-col :span="12">
+          <a-row :gutter="24">
+            <a-col :span="4">
+              <a-form-item size="small">
+                <!-- 计时器 -->
+                <div class="startTimer" v-if="!showTimer" @click="startTimer">
+                  <a-tooltip position="top" content="开始计时" mini>
+                    <IconClockCircle size="30" style="margin-left: 28px" />
+                  </a-tooltip>
+                </div>
+                <!-- 停止计时器按钮，显示在计时器后面 -->
+                <div
+                  class="stopTimer"
+                  v-else
+                  @click="stopTimer"
+                  style="display: flex; align-items: center"
+                >
+                  <div>{{ formatTime(time) }}</div>
+                  <IconLoop
+                    class="stopTimerIcon"
+                    size="30"
+                    style="margin-left: 8px"
+                  />
+                </div>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="10">
               <a-form-item field="language">
                 <a-select v-model="form.language" placeholder="选择编程语言">
                   <a-option value="java">
@@ -95,7 +120,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :span="12">
+            <a-col :span="10">
               <a-form-item field="theme">
                 <a-select v-model="form.theme" placeholder="选择主题">
                   <a-option value="vs-light">
@@ -134,7 +159,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref, withDefaults } from "vue";
+import {
+  defineProps,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  withDefaults,
+} from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
@@ -156,6 +188,44 @@ const form = ref<QuestionSubmitAddRequest>({
 }
   `, // Java 默认代码模板
   theme: "vs-light", // 默认主题为 Light
+});
+
+const showTimer = ref(false);
+const time = ref(0);
+let intervalId: any = null;
+
+const formatTime = (time: number): string => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+
+  return `${hours < 10 ? "0" + hours : hours}:${
+    minutes < 10 ? "0" + minutes : minutes
+  }:${seconds < 10 ? "0" + seconds : seconds}`;
+};
+
+const startTimer = () => {
+  showTimer.value = true;
+};
+const stopTimer = () => {
+  showTimer.value = false;
+  time.value = 0;
+};
+
+watch(
+  () => showTimer.value,
+  (newVal: boolean) => {
+    if (newVal) {
+      intervalId = setInterval(() => {
+        time.value++;
+      }, 1000);
+    } else {
+      clearInterval(intervalId);
+    }
+  }
+);
+onUnmounted(() => {
+  clearInterval(intervalId);
 });
 
 interface Props {
