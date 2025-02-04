@@ -45,4 +45,14 @@ onMounted(() => {
 .bold-text {
   font-weight: bold;
 }
+
+.arco-space-item {
+  margin-bottom: 0 !important;
+}
+
+.arco-card-header-title,
+.arco-descriptions-title,
+.arco-card-size-medium .arco-card-body {
+  font-weight: 700 !important;
+}
 </style>

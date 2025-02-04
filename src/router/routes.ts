@@ -67,6 +67,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "创建题目",
     component: QuestionEditorView,
     meta: {
+      hideInMenu: true,
       access: AccessEnum.ADMIN,
     },
   },

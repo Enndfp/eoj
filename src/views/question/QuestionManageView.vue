@@ -80,6 +80,16 @@
           重置
         </a-button>
       </a-form-item>
+      <a-form-item class="button-group">
+        <a-button
+          type="primary"
+          shape="round"
+          @click="goToAddQuestionPage"
+          class="bold-text"
+        >
+          创建题目
+        </a-button>
+      </a-form-item>
     </a-form>
 
     <a-divider />
@@ -341,6 +351,11 @@ const resetFilters = () => {
   loadData();
 };
 
+// 🔹 导航到创建题目页面
+const goToAddQuestionPage = () => {
+  router.push({ path: "/question/add" });
+};
+
 watchEffect(() => {
   loadData();
 });
@@ -479,7 +494,7 @@ const columns = [
   { title: "提交数", dataIndex: "submitNum", align: "center", width: 100 },
   { title: "通过数", dataIndex: "acceptedNum", align: "center", width: 100 },
   { title: "判题配置", slotName: "judgeConfig", align: "center", width: 380 },
-  { title: "判题用例", slotName: "judgeCase", align: "center", width: 120 },
+  { title: "判题用例", slotName: "judgeCase", align: "center", width: 130 },
   { title: "创建者", slotName: "creator", align: "center", width: 150 },
   { title: "创建时间", slotName: "createTime", align: "center", width: 160 },
   { title: "操作", slotName: "optional", align: "center", width: 160 },

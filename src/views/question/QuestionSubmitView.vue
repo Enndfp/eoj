@@ -18,10 +18,10 @@
           <a-option value="Java">
             <a-tag color="#f89820" class="bold-text">Java</a-tag>
           </a-option>
-          <a-option value="C++">
+          <a-option value="C++" disabled>
             <a-tag color="#00599C" class="bold-text">C++</a-tag>
           </a-option>
-          <a-option value="Go">
+          <a-option value="Go" disabled>
             <a-tag color="#00ADD8" class="bold-text">Go</a-tag>
           </a-option>
         </a-select>
