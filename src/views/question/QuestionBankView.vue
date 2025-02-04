@@ -73,7 +73,7 @@
       </a-form-item>
     </a-form>
 
-    <a-divider size="0" />
+    <a-divider :size="0" />
 
     <!-- 🔹 题目表格 -->
     <a-table
@@ -86,7 +86,7 @@
         showTotal: true,
         pageSize: searchParams.pageSize,
         current: searchParams.current,
-        total,
+        total: Number(total),
         showJumper: true,
         showPageSize: true,
       }"

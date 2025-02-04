@@ -147,7 +147,7 @@
             "
           ></CodeEditor>
 
-          <a-divider size="0"></a-divider>
+          <a-divider :size="0"></a-divider>
 
           <a-button type="primary" style="min-width: 200px" @click="doSubmit">
             提交代码
