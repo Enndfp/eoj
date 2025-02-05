@@ -1,0 +1,10 @@
+# 公共配置文件
+server:
+  port: 8125
+spring:
+  application:
+    name: eoj-backend-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

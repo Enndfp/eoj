@@ -1,3 +1,7 @@
 spring:
   application:
     name: eoj-backend-service-client
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

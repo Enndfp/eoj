@@ -8,13 +8,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>eoj-backend-common</module>
-        <module>eoj-backend-file-service</module>
-        <module>eoj-backend-gateway</module>
-        <module>eoj-backend-judge-service</module>
         <module>eoj-backend-model</module>
-        <module>eoj-backend-question-service</module>
+        <module>eoj-backend-gateway</module>
         <module>eoj-backend-service-client</module>
         <module>eoj-backend-user-service</module>
+        <module>eoj-backend-file-service</module>
+        <module>eoj-backend-judge-service</module>
+        <module>eoj-backend-question-service</module>
     </modules>
     <name>eoj-backend-microservice</name>
     <description>EOJ</description>
@@ -40,6 +40,12 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
+        </dependency>
+        <!--负载均衡-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-loadbalancer</artifactId>
+            <version>3.1.5</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
