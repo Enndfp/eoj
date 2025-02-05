@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: eoj-backend-service-client
