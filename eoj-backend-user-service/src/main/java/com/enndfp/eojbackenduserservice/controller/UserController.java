@@ -12,7 +12,7 @@ import com.enndfp.eojbackendmodel.model.dto.user.*;
 import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendmodel.model.vo.LoginUserVO;
 import com.enndfp.eojbackendmodel.model.vo.UserVO;
-import com.enndfp.eojbackenduserservice.service.UserService;
+import com.enndfp.eojbackendserviceclient.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
