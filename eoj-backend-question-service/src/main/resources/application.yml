@@ -1,0 +1,44 @@
+# 公共配置文件
+server:
+  port: 8122
+  servlet:
+    context-path: /api
+spring:
+  application:
+    name: eoj-backend-question-service
+  # 默认 dev 环境
+  profiles:
+    active: dev
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/eoj
+    username: root
+    password: 123456
+# MybatisPlus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete      # 全局逻辑删除的实体字段名
+      logic-delete-value: 1             # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0         # 逻辑未删除值（默认为 0）
+# Knife4j 配置
+knife4j:
+  enable: true
+  openapi:
+    title: "EOJ 题目服务接口文档"
+    version: 1.0
+    group:
+      default:
+        api-rule: package
+        api-rule-resources:
+          - com.enndfp.eojbackendquestionservice.controller
+codesandbox:
+  type: remote
