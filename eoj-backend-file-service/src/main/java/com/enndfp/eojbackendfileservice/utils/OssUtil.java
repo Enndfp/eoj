@@ -1,4 +1,4 @@
-package com.enndfp.eojbackendcommon.utils;
+package com.enndfp.eojbackendfileservice.utils;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
