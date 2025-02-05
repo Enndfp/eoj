@@ -27,6 +27,11 @@
             <artifactId>eoj-backend-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.enndfp</groupId>
+            <artifactId>eoj-backend-service-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--阿里云对象存储OSS-->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
