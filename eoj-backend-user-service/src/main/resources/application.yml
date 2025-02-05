@@ -1,6 +1,6 @@
 # 公共配置文件
 server:
-  port: 8121
+  port: 8122
   servlet:
     context-path: /api/user
 spring:

@@ -1,6 +1,6 @@
 # 公共配置文件
 server:
-  port: 8123
+  port: 8124
   servlet:
     context-path: /api/judge
 spring:

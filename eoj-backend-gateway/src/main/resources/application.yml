@@ -1,10 +1,30 @@
 # 公共配置文件
 server:
-  port: 8125
+  port: 8121
 spring:
   application:
     name: eoj-backend-gateway
+  main:
+    web-application-type: reactive
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: eoj-backend-user-service
+          uri: lb://eoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: eoj-backend-file-service
+          uri: lb://eoj-backend-file-service
+          predicates:
+            - Path=/api/file/**
+        - id: eoj-backend-judge-service
+          uri: lb://eoj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+        - id: eoj-backend-question-service
+          uri: lb://eoj-backend-question-service
+          predicates:
+            - Path=/api/question/**

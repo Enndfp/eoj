@@ -1,6 +1,6 @@
 # 公共配置文件
 server:
-  port: 8122
+  port: 8125
   servlet:
     context-path: /api/question
 spring:
