@@ -19,9 +19,9 @@ import com.enndfp.eojbackendmodel.model.entity.Question;
 import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendmodel.model.vo.QuestionSubmitVO;
 import com.enndfp.eojbackendmodel.model.vo.QuestionVO;
-import com.enndfp.eojbackendserviceclient.service.QuestionService;
-import com.enndfp.eojbackendserviceclient.service.QuestionSubmitService;
-import com.enndfp.eojbackendserviceclient.service.UserService;
+import com.enndfp.eojbackendquestionservice.service.QuestionService;
+import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
+import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("/question")
+@RequestMapping("/")
 public class QuestionController {
 
     @Resource
@@ -47,7 +47,7 @@ public class QuestionController {
     private QuestionSubmitService questionSubmitService;
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     /**
      * 创建题目
@@ -146,8 +146,8 @@ public class QuestionController {
         ThrowUtil.throwIf(question == null, ErrorCode.NOT_FOUND_ERROR);
 
         // 3. 校验是否有权限查看题目
-        User loginUser = userService.getLoginUser(request);
-        if (!Objects.equals(loginUser.getId(), question.getUserId()) && !userService.isAdmin(loginUser)) {
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (!Objects.equals(loginUser.getId(), question.getUserId()) && !userFeignClient.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 

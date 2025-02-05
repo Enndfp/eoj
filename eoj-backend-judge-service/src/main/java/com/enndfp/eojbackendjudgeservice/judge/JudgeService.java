@@ -1,4 +1,4 @@
-package com.enndfp.eojbackendserviceclient.service;
+package com.enndfp.eojbackendjudgeservice.judge;
 
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
 

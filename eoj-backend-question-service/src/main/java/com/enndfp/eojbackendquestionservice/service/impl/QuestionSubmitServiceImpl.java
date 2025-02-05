@@ -15,10 +15,10 @@ import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitLanguageEnum;
 import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojbackendmodel.model.vo.QuestionSubmitVO;
 import com.enndfp.eojbackendquestionservice.mapper.QuestionSubmitMapper;
-import com.enndfp.eojbackendserviceclient.service.JudgeService;
-import com.enndfp.eojbackendserviceclient.service.QuestionService;
-import com.enndfp.eojbackendserviceclient.service.QuestionSubmitService;
-import com.enndfp.eojbackendserviceclient.service.UserService;
+import com.enndfp.eojbackendquestionservice.service.QuestionService;
+import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
+import com.enndfp.eojbackendserviceclient.service.JudgeFeignClient;
+import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -43,16 +43,16 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private QuestionService questionService;
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     @Resource
     @Lazy
-    private JudgeService judgeService;
+    private JudgeFeignClient judgeFeignClient;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
         // 1. 用户是否登录
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userFeignClient.getLoginUser(request);
         ThrowUtil.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR);
 
         // 2. 题目是否存在
@@ -81,7 +81,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         // 6. 异步执行判题
         Long questionSubmitId = questionSubmit.getId();
         CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
+            judgeFeignClient.doJudge(questionSubmitId);
         });
 
         return questionSubmitId;
@@ -96,10 +96,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long userId = questionSubmit.getUserId();
         User user = null;
         if (userId != null && userId > 0) {
-            user = userService.getById(userId);
+            user = userFeignClient.getById(userId);
         }
         // 将用户对象转换为包装类
-        questionSubmitVO.setUserVO(userService.getUserVO(user));
+        questionSubmitVO.setUserVO(userFeignClient.getUserVO(user));
 
         // 3. 关联查询题目信息
         Long questionId = questionSubmit.getQuestionId();
@@ -114,7 +114,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long loginUserId = loginUser.getId();
 
         // 如果当前用户不是提交者且不是管理员，脱敏代码字段
-        if (!Objects.equals(loginUserId, questionSubmit.getUserId()) && !userService.isAdmin(loginUser)) {
+        if (!Objects.equals(loginUserId, questionSubmit.getUserId()) && !userFeignClient.isAdmin(loginUser)) {
             questionSubmitVO.setCode(null); // 脱敏：非管理员和非提交者的用户不能查看代码
         }
 
@@ -130,7 +130,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         ThrowUtil.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
         // 2. 获取登录用户
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userFeignClient.getLoginUser(request);
 
         // 3. 处理分页获取题目提交列表逻辑
         Page<QuestionSubmit> questionSubmitPage = this.page(new Page<>(current, size), getQueryWrapper(questionSubmitQueryRequest));

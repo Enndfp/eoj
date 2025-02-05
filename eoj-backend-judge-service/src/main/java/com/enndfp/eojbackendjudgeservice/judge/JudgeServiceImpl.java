@@ -14,9 +14,7 @@ import com.enndfp.eojbackendmodel.model.dto.question.JudgeCase;
 import com.enndfp.eojbackendmodel.model.entity.Question;
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
 import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitStatusEnum;
-import com.enndfp.eojbackendserviceclient.service.JudgeService;
-import com.enndfp.eojbackendserviceclient.service.QuestionService;
-import com.enndfp.eojbackendserviceclient.service.QuestionSubmitService;
+import com.enndfp.eojbackendserviceclient.service.QuestionFeignClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -40,20 +38,17 @@ public class JudgeServiceImpl implements JudgeService {
     private JudgeManager judgeManager;
 
     @Resource
-    private QuestionService questionService;
-
-    @Resource
-    private QuestionSubmitService questionSubmitService;
+    private QuestionFeignClient questionFeignClient;
 
     @Override
     public QuestionSubmit doJudge(long questionSubmitId) {
         // 1. 判断提交记录是否存在
-        QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
+        QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(questionSubmitId);
         ThrowUtil.throwIf(questionSubmit == null, ErrorCode.NOT_FOUND_ERROR, "提交记录不存在");
 
         // 2. 判断题目是否存在
         long questionId = questionSubmit.getQuestionId();
-        Question question = questionService.getById(questionId);
+        Question question = questionFeignClient.getQuestionById(questionId);
         ThrowUtil.throwIf(question == null, ErrorCode.NOT_FOUND_ERROR, "题目不存在");
 
         // 3. 判断提交记录状态是否为等待
@@ -63,7 +58,7 @@ public class JudgeServiceImpl implements JudgeService {
         QuestionSubmit questionSubmitUpdate = new QuestionSubmit();
         questionSubmitUpdate.setId(questionSubmitId);
         questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.RUNNING.getValue());
-        boolean result = questionSubmitService.updateById(questionSubmitUpdate);
+        boolean result = questionFeignClient.updateQuestionSubmit(questionSubmitUpdate);
         ThrowUtil.throwIf(!result, ErrorCode.SYSTEM_ERROR, "提交题目状态更新失败");
 
         // 5. 调用代码沙箱执行代码
@@ -98,9 +93,9 @@ public class JudgeServiceImpl implements JudgeService {
         questionSubmitUpdate.setId(questionSubmitId);
         questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCESS.getValue());
         questionSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
-        result = questionSubmitService.updateById(questionSubmitUpdate);
+        result = questionFeignClient.updateQuestionSubmit(questionSubmitUpdate);
         ThrowUtil.throwIf(!result, ErrorCode.SYSTEM_ERROR, "提交题目状态更新失败");
-        QuestionSubmit questionSubmitResult = questionSubmitService.getById(questionSubmitId);
+        QuestionSubmit questionSubmitResult = questionFeignClient.getQuestionSubmitById(questionSubmitId);
 
         return questionSubmitResult;
     }

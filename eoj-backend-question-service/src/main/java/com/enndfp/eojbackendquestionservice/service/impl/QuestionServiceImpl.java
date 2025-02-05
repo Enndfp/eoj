@@ -17,8 +17,8 @@ import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendmodel.model.vo.QuestionVO;
 import com.enndfp.eojbackendmodel.model.vo.UserVO;
 import com.enndfp.eojbackendquestionservice.mapper.QuestionMapper;
-import com.enndfp.eojbackendserviceclient.service.QuestionService;
-import com.enndfp.eojbackendserviceclient.service.UserService;
+import com.enndfp.eojbackendquestionservice.service.QuestionService;
+import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     @Override
     public Long addQuestion(QuestionAddRequest questionAddRequest, HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         validQuestion(question, true);
 
         // 3. 封装创建者信息
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userFeignClient.getLoginUser(request);
         question.setUserId(loginUser.getId());
 
         // 4. 保存题目
@@ -74,7 +74,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Override
     public Boolean deleteQuestion(DeleteRequest deleteRequest, HttpServletRequest request) {
         // 1. 获取当前登录用户
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userFeignClient.getLoginUser(request);
 
         // 2. 校验题目是否存在
         long id = deleteRequest.getId();
@@ -82,7 +82,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         ThrowUtil.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
 
         // 3. 校验用户是否有权限删除题目
-        if (!oldQuestion.getUserId().equals(loginUser.getId()) && !userService.isAdmin(request)) {
+        if (!oldQuestion.getUserId().equals(loginUser.getId()) && !userFeignClient.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
@@ -145,8 +145,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         ThrowUtil.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
 
         // 4. 校验用户是否有权限删除题目
-        User loginUser = userService.getLoginUser(request);
-        if (!oldQuestion.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (!oldQuestion.getUserId().equals(loginUser.getId()) && !userFeignClient.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
@@ -162,11 +162,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         Long userId = question.getUserId();
         User user = null;
         if (userId != null && userId > 0) {
-            user = userService.getById(userId);
+            user = userFeignClient.getById(userId);
         }
 
         // 3. 将用户对象转换为包装类
-        UserVO userVO = userService.getUserVO(user);
+        UserVO userVO = userFeignClient.getUserVO(user);
         questionVO.setUserVO(userVO);
 
         return questionVO;
@@ -206,7 +206,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // 如果userIdSet为空，直接返回空的userIdUserListMap
         Map<Long, List<User>> userIdUserListMap = Collections.emptyMap();
         if (!userIdSet.isEmpty()) {
-            userIdUserListMap = userService.listByIds(userIdSet).stream()
+            userIdUserListMap = userFeignClient.listByIds(userIdSet).stream()
                     .collect(Collectors.groupingBy(User::getId));
         }
 
@@ -219,7 +219,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             if (userId != null && finalUserIdUserListMap.containsKey(userId)) {
                 user = finalUserIdUserListMap.get(userId).get(0);
             }
-            questionVO.setUserVO(userService.getUserVO(user));
+            questionVO.setUserVO(userFeignClient.getUserVO(user));
             return questionVO;
         }).collect(Collectors.toList());
         questionVOPage.setRecords(questionVOList);
@@ -236,7 +236,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         ThrowUtil.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
         // 2. 设置登录用户id
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userFeignClient.getLoginUser(request);
         questionQueryRequest.setUserId(loginUser.getId());
 
         // 3. 处理分页获取题目列表逻辑
