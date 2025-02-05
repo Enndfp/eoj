@@ -4,7 +4,7 @@ import com.enndfp.eojbackendcommon.common.BaseResponse;
 import com.enndfp.eojbackendcommon.common.ErrorCode;
 import com.enndfp.eojbackendcommon.common.ResultUtil;
 import com.enndfp.eojbackendcommon.exception.ThrowUtil;
-import com.enndfp.eojbackendserviceclient.service.FileService;
+import com.enndfp.eojbackendfileservice.service.FileService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/")
 public class FileController {
 
     @Resource

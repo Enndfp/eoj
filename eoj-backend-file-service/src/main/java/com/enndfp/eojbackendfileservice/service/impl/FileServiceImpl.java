@@ -4,8 +4,8 @@ import cn.hutool.core.date.DateTime;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.ObjectMetadata;
+import com.enndfp.eojbackendfileservice.service.FileService;
 import com.enndfp.eojbackendfileservice.utils.OssUtil;
-import com.enndfp.eojbackendserviceclient.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

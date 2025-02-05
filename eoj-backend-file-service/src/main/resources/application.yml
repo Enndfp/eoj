@@ -2,7 +2,7 @@
 server:
   port: 8124
   servlet:
-    context-path: /api
+    context-path: /api/file
 spring:
   application:
     name: eoj-backend-file-service
