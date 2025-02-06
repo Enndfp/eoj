@@ -57,6 +57,16 @@
             <version>3.5.2</version>
         </dependency>
 
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+
         <!--阿里云对象存储OSS-->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
