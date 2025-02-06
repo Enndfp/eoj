@@ -11,6 +11,21 @@ const baseUrl =
 
 OpenAPI.BASE = baseUrl;
 
+// 携带token方式登录
+axios.interceptors.request.use(
+  (config) => {
+    // 假设token存在localStorage中
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 axios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
