@@ -3,6 +3,11 @@ server:
   port: 8125
   servlet:
     context-path: /api/question
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: /api
 spring:
   application:
     name: eoj-backend-question-service
@@ -36,13 +41,5 @@ mybatis-plus:
 # Knife4j 配置
 knife4j:
   enable: true
-  openapi:
-    title: "EOJ 题目服务接口文档"
-    version: 1.0
-    group:
-      default:
-        api-rule: package
-        api-rule-resources:
-          - com.enndfp.eojbackendquestionservice.controller
 codesandbox:
   type: remote

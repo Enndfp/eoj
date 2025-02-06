@@ -3,6 +3,7 @@ package com.enndfp.eojbackenduserservice.controller.inner;
 import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
 import com.enndfp.eojbackenduserservice.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +33,7 @@ public class UserInnerController implements UserFeignClient {
      */
     @Override
     @GetMapping("/get/id")
+    @ApiOperation(value = "根据 ID 获取用户")
     public User getById(@RequestParam("userId") Long userId) {
         return userService.getById(userId);
     }
@@ -44,6 +46,7 @@ public class UserInnerController implements UserFeignClient {
      */
     @Override
     @GetMapping("/get/ids")
+    @ApiOperation(value = "根据 ID 列表获取用户列表")
     public List<User> listByIds(@RequestParam("idList") Collection<Long> idList) {
         return userService.listByIds(idList);
     }

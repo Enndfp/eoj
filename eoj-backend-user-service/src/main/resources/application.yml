@@ -3,6 +3,11 @@ server:
   port: 8122
   servlet:
     context-path: /api/user
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: /api
 spring:
   application:
     name: eoj-backend-user-service
@@ -36,13 +41,5 @@ mybatis-plus:
 # Knife4j 配置
 knife4j:
   enable: true
-  openapi:
-    title: "EOJ 用户服务接口文档"
-    version: 1.0
-    group:
-      default:
-        api-rule: package
-        api-rule-resources:
-          - com.enndfp.eojbackenduserservice.controller
 codesandbox:
   type: remote

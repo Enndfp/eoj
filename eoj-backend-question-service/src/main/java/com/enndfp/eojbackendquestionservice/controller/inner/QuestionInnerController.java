@@ -5,6 +5,7 @@ import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
 import com.enndfp.eojbackendquestionservice.service.QuestionService;
 import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
 import com.enndfp.eojbackendserviceclient.service.QuestionFeignClient;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ public class QuestionInnerController implements QuestionFeignClient {
      */
     @Override
     @GetMapping("/get/id")
+    @ApiOperation(value = "根据 ID 获取题目")
     public Question getQuestionById(@RequestParam("questionId") Long questionId) {
         return questionService.getById(questionId);
     }
@@ -44,6 +46,7 @@ public class QuestionInnerController implements QuestionFeignClient {
      */
     @Override
     @GetMapping("/question_submit/get/id")
+    @ApiOperation(value = "根据 ID 获取题目提交信息")
     public QuestionSubmit getQuestionSubmitById(@RequestParam("questionSubmitId") Long questionSubmitId) {
         return questionSubmitService.getById(questionSubmitId);
     }
@@ -56,6 +59,7 @@ public class QuestionInnerController implements QuestionFeignClient {
      */
     @Override
     @PostMapping("/question_submit/update")
+    @ApiOperation(value = "更新题目提交信息")
     public Boolean updateQuestionSubmit(@RequestBody QuestionSubmit questionSubmit) {
         return questionSubmitService.updateById(questionSubmit);
     }

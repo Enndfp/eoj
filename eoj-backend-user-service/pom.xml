@@ -32,6 +32,12 @@
             <artifactId>eoj-backend-service-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- knife4j 接口文档工具 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.3.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

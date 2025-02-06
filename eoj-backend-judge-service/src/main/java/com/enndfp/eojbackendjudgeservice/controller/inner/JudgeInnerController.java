@@ -3,6 +3,7 @@ package com.enndfp.eojbackendjudgeservice.controller.inner;
 import com.enndfp.eojbackendjudgeservice.judge.JudgeService;
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
 import com.enndfp.eojbackendserviceclient.service.JudgeFeignClient;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ public class JudgeInnerController implements JudgeFeignClient {
      */
     @Override
     @PostMapping("/do")
+    @ApiOperation(value = "判题")
     public QuestionSubmit doJudge(@RequestParam("questionSubmitId") Long questionSubmitId) {
         return judgeService.doJudge(questionSubmitId);
     }

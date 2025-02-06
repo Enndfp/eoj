@@ -3,6 +3,11 @@ server:
   port: 8123
   servlet:
     context-path: /api/file
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: /api
 spring:
   application:
     name: eoj-backend-file-service
@@ -36,14 +41,6 @@ mybatis-plus:
 # Knife4j 配置
 knife4j:
   enable: true
-  openapi:
-    title: "EOJ 文件服务接口文档"
-    version: 1.0
-    group:
-      default:
-        api-rule: package
-        api-rule-resources:
-          - com.enndfp.eojbackendfileservice.controller
 codesandbox:
   type: remote
 # 阿里云对象存储
