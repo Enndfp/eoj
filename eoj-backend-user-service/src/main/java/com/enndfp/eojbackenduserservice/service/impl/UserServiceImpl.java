@@ -10,6 +10,7 @@ import com.enndfp.eojbackendcommon.common.ErrorCode;
 import com.enndfp.eojbackendcommon.constant.CommonConstant;
 import com.enndfp.eojbackendcommon.exception.BusinessException;
 import com.enndfp.eojbackendcommon.exception.ThrowUtil;
+import com.enndfp.eojbackendcommon.utils.JwtUtil;
 import com.enndfp.eojbackendcommon.utils.SqlUtil;
 import com.enndfp.eojbackendmodel.model.dto.user.*;
 import com.enndfp.eojbackendmodel.model.entity.User;
@@ -27,7 +28,9 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -142,10 +145,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不存在或密码不正确");
         }
 
-        // 3. 用户脱敏
-        LoginUserVO loginUserVO = getLoginUserVO(user);
+        // 3. 生成Token
+        Map<String, Object> tokenMap = new HashMap<>();
+        tokenMap.put("id", user.getId());
+        tokenMap.put("userAccount", user.getUserAccount());
+        String token = JwtUtil.getToken(tokenMap);
 
-        // 4. 记录用户的登录态
+        // 4. 用户脱敏
+        LoginUserVO loginUserVO = getLoginUserVO(user);
+        loginUserVO.setToken(token);
+
+        // 5. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATUS, loginUserVO);
 
         return loginUserVO;
