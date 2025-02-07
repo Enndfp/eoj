@@ -15,6 +15,7 @@ import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitLanguageEnum;
 import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojbackendmodel.model.vo.QuestionSubmitVO;
 import com.enndfp.eojbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.enndfp.eojbackendquestionservice.mq.CodeMqProducer;
 import com.enndfp.eojbackendquestionservice.service.QuestionService;
 import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
 import com.enndfp.eojbackendserviceclient.service.JudgeFeignClient;
@@ -28,8 +29,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static com.enndfp.eojbackendcommon.constant.MqConstant.CODE_EXCHANGE;
+import static com.enndfp.eojbackendcommon.constant.MqConstant.CODE_ROUTING_KEY;
 
 /**
  * 题目提交服务实现
@@ -48,6 +51,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private CodeMqProducer codeMqProducer;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
@@ -78,11 +84,22 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         boolean save = this.save(questionSubmit);
         ThrowUtil.throwIf(!save, ErrorCode.SYSTEM_ERROR, "题目提交失败");
 
-        // 6. 异步执行判题
+        // 6. 更新题目提交数
+        Integer submitNum = question.getSubmitNum();
+        Question updateQuestion = new Question();
+        synchronized (question) {
+            submitNum = submitNum + 1;
+            updateQuestion.setId(questionId);
+            updateQuestion.setSubmitNum(submitNum);
+
+            // 更新题目提交数
+            boolean updateSuccess = questionService.updateById(updateQuestion);
+            ThrowUtil.throwIf(!updateSuccess, ErrorCode.OPERATION_ERROR, "数据保存失败");
+        }
+
+        // 7. 异步执行判题（通过消息队列）
         Long questionSubmitId = questionSubmit.getId();
-        CompletableFuture.runAsync(() -> {
-            judgeFeignClient.doJudge(questionSubmitId);
-        });
+        codeMqProducer.sendMessage(CODE_EXCHANGE, CODE_ROUTING_KEY, String.valueOf(questionSubmitId));
 
         return questionSubmitId;
     }

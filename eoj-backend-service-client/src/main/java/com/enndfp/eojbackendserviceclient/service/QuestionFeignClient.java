@@ -43,4 +43,13 @@ public interface QuestionFeignClient {
     @PostMapping("/question_submit/update")
     Boolean updateQuestionSubmit(@RequestBody QuestionSubmit questionSubmit);
 
+    /**
+     * 更新题目信息
+     *
+     * @param question 题目信息
+     * @return 是否更新成功
+     */
+    @PostMapping("/question/update")
+    Boolean updateQuestion(@RequestBody Question question);
+
 }

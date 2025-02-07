@@ -64,4 +64,17 @@ public class QuestionInnerController implements QuestionFeignClient {
         return questionSubmitService.updateById(questionSubmit);
     }
 
+    /**
+     * 更新题目信息
+     *
+     * @param question 题目信息
+     * @return 是否更新成功
+     */
+    @Override
+    @PostMapping("/question/update")
+    @ApiOperation(value = "更新题目信息")
+    public Boolean updateQuestion(Question question) {
+        return questionService.updateById(question);
+    }
+
 }

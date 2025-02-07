@@ -32,6 +32,11 @@
             <artifactId>eoj-backend-service-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- RabbitMQ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
         <!-- knife4j 接口文档工具 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
