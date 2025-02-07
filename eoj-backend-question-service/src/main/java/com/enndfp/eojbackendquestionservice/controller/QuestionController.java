@@ -19,6 +19,7 @@ import com.enndfp.eojbackendmodel.model.entity.Question;
 import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendmodel.model.vo.QuestionSubmitVO;
 import com.enndfp.eojbackendmodel.model.vo.QuestionVO;
+import com.enndfp.eojbackendquestionservice.manager.RedisLimiterManager;
 import com.enndfp.eojbackendquestionservice.service.QuestionService;
 import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
 import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
@@ -48,6 +49,9 @@ public class QuestionController {
 
     @Resource
     private UserFeignClient userFeignClient;
+
+    @Resource
+    private RedisLimiterManager redisLimiterManager;
 
     /**
      * 创建题目
@@ -247,7 +251,15 @@ public class QuestionController {
         ThrowUtil.throwIf(questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0, ErrorCode.PARAMS_ERROR);
         ThrowUtil.throwIf(request == null, ErrorCode.PARAMS_ERROR);
 
-        // 2. 处理提交题目逻辑
+        // 2. 登录用户校验
+        User loginUser = userFeignClient.getLoginUser(request);
+        ThrowUtil.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+
+        // 3. 限流校验
+        boolean rateLimit = redisLimiterManager.doRateLimit(loginUser.getId().toString());
+        ThrowUtil.throwIf(!rateLimit, ErrorCode.TOO_MANY_REQUEST, "提交过于频繁，请稍后再试");
+
+        // 4. 处理提交题目逻辑
         Long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, request);
 
         return ResultUtil.success(questionSubmitId);

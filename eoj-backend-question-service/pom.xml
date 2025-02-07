@@ -32,6 +32,12 @@
             <artifactId>eoj-backend-service-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--Redisson-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.21.3</version>
+        </dependency>
         <!-- RabbitMQ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

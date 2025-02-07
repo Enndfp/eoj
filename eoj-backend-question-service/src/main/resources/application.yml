@@ -60,3 +60,8 @@ knife4j:
   enable: true
 codesandbox:
   type: remote
+# 限流配置
+redisson:
+  limit:
+    rate: 2    # 每秒最多 2 次请求
+    interval: 1  # 限流时间间隔，默认 1 秒
