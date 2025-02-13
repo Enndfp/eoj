@@ -1,0 +1,44 @@
+# 公共配置文件
+server:
+  port: 8121
+spring:
+  application:
+    name: eoj-backend-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: eoj-backend-user-service
+          uri: lb://eoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: eoj-backend-file-service
+          uri: lb://eoj-backend-file-service
+          predicates:
+            - Path=/api/file/**
+        - id: eoj-backend-judge-service
+          uri: lb://eoj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+        - id: eoj-backend-question-service
+          uri: lb://eoj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+knife4j:
+  gateway:
+    # ① 第一个配置，开启gateway聚合组件
+    enabled: true
+    # ② 第二行配置，设置聚合模式采用discover服务发现的模式
+    strategy: discover
+    discover:
+      # ③ 第三行配置，开启discover模式
+      enabled: true
+      # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
+      version: swagger2
+# 不需要鉴权的接口
+gateway:
+  excludedUrls: /api/user/get/login,/api/user/logout,/user/register,/api/user/update/my,/api/user/login,/user/getLoginUser,/api/user/register,/api/question/list/page/vo,/api/file,/api/file/v2/api-docs,/api/judge/v2/api-docs,/api/question/v2/api-docs,/api/user/v2/api-docs
