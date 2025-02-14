@@ -14,4 +14,3 @@ export type QuestionAddRequest = {
   tags?: Array<string>;
   title?: string;
 };
-

@@ -6,4 +6,3 @@ export type JudgeCase = {
   input?: string;
   output?: string;
 };
-

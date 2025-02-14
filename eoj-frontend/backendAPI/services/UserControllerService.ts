@@ -38,8 +38,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -60,8 +60,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -78,13 +78,13 @@ export class UserControllerService {
       method: "GET",
       url: "/api/user/get",
       query: {
-        "id": id
+        id: id,
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -100,8 +100,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -118,13 +118,13 @@ export class UserControllerService {
       method: "GET",
       url: "/api/user/get/vo",
       query: {
-        "id": id
+        id: id,
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -145,8 +145,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -167,8 +167,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -189,8 +189,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -200,15 +200,17 @@ export class UserControllerService {
    * @returns any Created
    * @throws ApiError
    */
-  public static userLogoutUsingPost(): CancelablePromise<BaseResponse_boolean_ | any> {
+  public static userLogoutUsingPost(): CancelablePromise<
+    BaseResponse_boolean_ | any
+  > {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/user/logout",
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -229,8 +231,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -251,8 +253,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 
@@ -273,8 +275,8 @@ export class UserControllerService {
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 }

@@ -22,13 +22,13 @@ export class FileControllerService {
       method: "POST",
       url: "/api/file/upload",
       formData: {
-        "file": file
+        file: file,
       },
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,
-        404: `Not Found`
-      }
+        404: `Not Found`,
+      },
     });
   }
 }

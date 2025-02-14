@@ -13,4 +13,3 @@ export type QuestionSubmitQueryRequest = {
   title?: string;
   userId?: number;
 };
-

@@ -17,4 +17,3 @@ export type Page_Question_ = {
   size?: number;
   total?: number;
 };
-

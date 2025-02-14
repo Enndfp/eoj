@@ -6,4 +6,3 @@ export type OrderItem = {
   asc?: boolean;
   column?: string;
 };
-

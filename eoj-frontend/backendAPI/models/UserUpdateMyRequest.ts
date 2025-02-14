@@ -7,4 +7,3 @@ export type UserUpdateMyRequest = {
   userName?: string;
   userProfile?: string;
 };
-

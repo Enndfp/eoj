@@ -7,4 +7,3 @@ export type JudgeInfo = {
   message?: string;
   time?: number;
 };
-

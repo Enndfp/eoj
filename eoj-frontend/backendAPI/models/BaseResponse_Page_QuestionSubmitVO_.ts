@@ -9,4 +9,3 @@ export type BaseResponse_Page_QuestionSubmitVO_ = {
   data?: Page_QuestionSubmitVO_;
   message?: string;
 };
-
