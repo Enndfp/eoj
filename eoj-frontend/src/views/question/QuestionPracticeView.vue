@@ -368,12 +368,12 @@ const changeCode = (value: string) => {
   background-color: #fafafa;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 16px;
+  padding: 3px;
   height: 100%;
 }
 
 .answer-tabs {
-  height: 60vh;
+  height: 70vh;
 }
 
 .answer-content {

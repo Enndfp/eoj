@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .viewer-container {
-  max-height: 60vh;
+  max-height: 70vh;
   height: 100%;
   overflow-y: auto;
   background-color: #ffffff;

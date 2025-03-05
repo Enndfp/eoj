@@ -72,6 +72,7 @@
         total,
         showJumper: true,
         showPageSize: true,
+        pageSizeOptions: [5, 10, 15, 20, 25],
       }"
       @page-change="onPageChange"
       @pageSizeChange="onPageSizeChange"
@@ -231,7 +232,7 @@ const searchParams = ref({
   userName: "",
   userProfile: "",
   userRole: "",
-  pageSize: 10,
+  pageSize: 5,
   current: 1,
 });
 
