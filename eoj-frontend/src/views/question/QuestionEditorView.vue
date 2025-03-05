@@ -376,6 +376,7 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("创建成功");
+      await router.push({ path: "/question/manage", replace: true });
       // 创建成功后清空表单
       form.value = {
         title: "",

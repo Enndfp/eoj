@@ -181,12 +181,18 @@ const router = useRouter();
 const question = ref<QuestionVO>();
 const form = ref<QuestionSubmitAddRequest>({
   language: "java", // 默认设置为Java
-  code: `public class Main {
+  code: `/*
+ * 请根据题目要求编写解题代码
+ * 1. 无需导入 package
+ * 2. 类名必须是 Main，不能修改
+ * 3. 请从命令行读取数据并输出结果
+ */
+public class Main {
     public static void main(String[] args) {
-        // 编写解题函数
+        // 在此编写您的解题代码
     }
 }
-  `, // Java 默认代码模板
+  `, // 更新后的 Java 默认代码模板
   theme: "vs-light", // 默认主题为 Light
 });
 
