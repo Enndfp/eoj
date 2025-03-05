@@ -1,6 +1,5 @@
-package com.enndfp.eojcodesandbox;
+package com.enndfp.eojcodesandbox.service.java;
 
-import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
@@ -18,7 +17,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,17 +38,9 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
      */
     private static Boolean FIRST_INIT = true;
 
-    public static void main(String[] args) {
-        JavaDockerCodeSandboxOld javaDockerCodeSandbox = new JavaDockerCodeSandboxOld();
-        String code = ResourceUtil.readUtf8Str("testCode/simpleComputeArgs" + File.separator + GLOBAL_JAVA_CLASS_NAME);
-        ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
-                .code(code)
-                .language("java")
-                .inputList(Arrays.asList("1 2", "1 3"))
-                .build();
-
-        ExecuteCodeResponse executeCodeResponse = javaDockerCodeSandbox.executeCode(executeCodeRequest);
-        System.out.println(executeCodeResponse);
+    @Override
+    public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
+        return super.executeCode(executeCodeRequest);
     }
 
     @Override

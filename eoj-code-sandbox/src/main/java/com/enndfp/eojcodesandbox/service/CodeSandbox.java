@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox;
+package com.enndfp.eojcodesandbox.service;
 
 import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
