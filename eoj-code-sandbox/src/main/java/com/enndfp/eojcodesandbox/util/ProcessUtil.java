@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 进程工具类
@@ -17,6 +19,7 @@ import java.util.List;
  * @author Enndfp
  */
 public class ProcessUtil {
+    private static final Logger LOGGER = Logger.getLogger(ProcessUtil.class.getName());
 
     /**
      * 运行进程并获取消息
@@ -27,55 +30,65 @@ public class ProcessUtil {
      */
     public static ExecuteMessage runProcessAndGetMessage(Process runProcess, String opName) {
         ExecuteMessage executeMessage = new ExecuteMessage();
-        long initialMemory = getUsedMemory();
+        final long initialMemory = getUsedMemory();
 
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
+
             // 等待进程执行完毕
             int exitValue = runProcess.waitFor();
             executeMessage.setExitValue(exitValue);
-            if (exitValue == 0) {
-                // 获取进程的正常输出信息（如开发者调试信息）
-                System.out.println(opName + "成功");
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream(), StandardCharsets.UTF_8));
-                List<String> outputList = new ArrayList<>();
-                String compileOutputLine;
-                while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                    outputList.add(compileOutputLine);
-                }
-                executeMessage.setMessage(StringUtils.join(outputList, "\n"));
-            } else {
-                System.out.println(opName + "失败，退出码：" + exitValue);
-                // 获取进程的正常输出信息（如开发者调试信息）
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream(), StandardCharsets.UTF_8));
-                List<String> outputList = new ArrayList<>();
-                String compileOutputLine;
-                while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                    outputList.add(compileOutputLine);
-                }
-                executeMessage.setMessage(StringUtils.join(outputList, "\n"));
 
-                // 获取进程的错误输出信息
-                BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(runProcess.getErrorStream(), StandardCharsets.UTF_8));
-                List<String> errorOutputList = new ArrayList<>();
-                String errorCompileOutputLine;
-                while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
-                    errorOutputList.add(errorCompileOutputLine);
-                }
-                executeMessage.setErrorMessage(StringUtils.join(errorOutputList, "\n"));
+            // 标准输出流处理
+            String normalOutput = captureStream(runProcess.getInputStream());
+            // 错误输出流处理
+            String errorOutput = captureStream(runProcess.getErrorStream());
+
+            // 记录执行结果
+            if (exitValue == 0) {
+                LOGGER.info(opName + "成功");
+            } else {
+                LOGGER.warning(opName + "失败，退出码：" + exitValue);
             }
+
+            executeMessage.setMessage(normalOutput);
+            executeMessage.setErrorMessage(errorOutput);
+
             stopWatch.stop();
             long finalMemory = getUsedMemory();
             long memoryUsage = finalMemory - initialMemory;
+
             // 转换成KB
             executeMessage.setMemory(memoryUsage / 1024);
             executeMessage.setTime(stopWatch.getTotalTimeMillis());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, opName + "进程执行中断", e);
+            Thread.currentThread().interrupt();
         }
 
         return executeMessage;
+    }
+
+    /**
+     * 捕获输入流内容
+     *
+     * @param inputStream 输入流
+     * @return 捕获的内容字符串
+     */
+    private static String captureStream(java.io.InputStream inputStream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            List<String> outputList = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outputList.add(line);
+            }
+            return StringUtils.join(outputList, "\n");
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "流捕获异常", e);
+            return "";
+        }
     }
 
     /**
