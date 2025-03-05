@@ -120,15 +120,15 @@
 
       <!-- 🔹 通过率 -->
       <template #acceptedRate="{ record }">
-        {{
-          `${
+        <span>
+          {{
             Math.round(
               (record.submitNum > 0
                 ? (record.acceptedNum / record.submitNum) * 100
                 : 0) * 100
             ) / 100
-          }% (${record.acceptedNum}/${record.submitNum})`
-        }}
+          }}%
+        </span>
       </template>
 
       <!-- 🔹 题目难度 -->

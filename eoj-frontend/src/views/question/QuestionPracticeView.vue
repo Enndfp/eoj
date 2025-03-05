@@ -64,12 +64,42 @@
             </a-card>
           </a-tab-pane>
 
-          <!-- 评论区 -->
-          <a-tab-pane key="comment" title="评论" disabled> 评论区</a-tab-pane>
-
-          <!-- 答案区 -->
-          <a-tab-pane key="answer" title="答案" disabled>
-            暂时无法查看答案
+          <!-- 题解区 -->
+          <a-tab-pane key="answer" title="题解">
+            <a-card :bordered="false" class="answer-card">
+              <a-tabs
+                default-active-key="java"
+                type="rounded"
+                size="small"
+                position="left"
+                class="answer-tabs"
+              >
+                <a-tab-pane key="java" title="Java">
+                  <div class="answer-content">
+                    <MdViewer
+                      :value="question?.answer ?? '此题暂未提供 Java 答案'"
+                      class="markdown-viewer"
+                    />
+                  </div>
+                </a-tab-pane>
+                <a-tab-pane key="go" title="Go">
+                  <div class="answer-content">
+                    <MdViewer
+                      :value="'此题暂未提供 Go 答案'"
+                      class="markdown-viewer"
+                    />
+                  </div>
+                </a-tab-pane>
+                <a-tab-pane key="cpp" title="C++">
+                  <div class="answer-content">
+                    <MdViewer
+                      :value="'此题暂未提供 C++ 答案'"
+                      class="markdown-viewer"
+                    />
+                  </div>
+                </a-tab-pane>
+              </a-tabs>
+            </a-card>
           </a-tab-pane>
         </a-tabs>
       </a-col>
@@ -332,5 +362,32 @@ const changeCode = (value: string) => {
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+}
+
+.answer-card {
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  height: 100%;
+}
+
+.answer-tabs {
+  height: 60vh;
+}
+
+.answer-content {
+  height: 100%;
+  overflow: auto;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.markdown-viewer {
+  font-size: 14px;
+  line-height: 1.8;
 }
 </style>
