@@ -1,12 +1,14 @@
 package com.enndfp.eojbackendjudgeservice.mq;
 
+import cn.hutool.json.JSONUtil;
 import com.enndfp.eojbackendcommon.common.ErrorCode;
 import com.enndfp.eojbackendcommon.exception.BusinessException;
 import com.enndfp.eojbackendcommon.exception.ThrowUtil;
 import com.enndfp.eojbackendjudgeservice.judge.JudgeService;
+import com.enndfp.eojbackendmodel.model.codesandbox.JudgeInfo;
 import com.enndfp.eojbackendmodel.model.entity.Question;
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
-import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitStatusEnum;
+import com.enndfp.eojbackendmodel.model.enums.JudgeInfoMessageEnum;
 import com.enndfp.eojbackendserviceclient.service.QuestionFeignClient;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
@@ -63,8 +65,21 @@ public class CodeMqConsumer {
 
             // 4. 获取题目提交记录
             QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(questionSubmitId);
-            if (questionSubmit == null || !questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.SUCCESS.getValue())) {
-                // 5. 判题失败，拒绝消息并进入死信队列
+            if (questionSubmit == null) {
+                channel.basicNack(deliveryTag, false, false);
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "未找到题目提交记录");
+            }
+
+            // 5. 从 judgeInfo 中解析 message，判断是否为 "Accepted"
+            String judgeInfoJson = questionSubmit.getJudgeInfo();
+            if (judgeInfoJson == null) {
+                channel.basicNack(deliveryTag, false, false);
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "未获取到判题信息");
+            }
+
+            JudgeInfo judgeInfo = JSONUtil.toBean(judgeInfoJson, JudgeInfo.class);
+            if (!JudgeInfoMessageEnum.ACCEPTED.getValue().equals(judgeInfo.getMessage())) {
+                // 判题失败，拒绝消息并进入死信队列
                 channel.basicNack(deliveryTag, false, false);
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "判题失败");
             }

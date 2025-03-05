@@ -43,7 +43,7 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         // 2. 判断沙箱执行的结果输出是否和预期输出相等
         for (int i = 0; i < judgeCaseList.size(); i++) {
             JudgeCase judgeCase = judgeCaseList.get(i);
-            if (!Objects.equals(judgeCase.getOutput(), outputList.get(i))) {
+            if (!Objects.equals(judgeCase.getOutput().trim(), outputList.get(i).trim())) {
                 judgeInfoMessageEnum = JudgeInfoMessageEnum.ANSWER_ERROR;
                 judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
                 return judgeInfoResponse;
