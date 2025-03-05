@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox.enums;
+package com.enndfp.eojcodesandbox.model.enums;
 
 import org.apache.commons.lang3.ObjectUtils;
 

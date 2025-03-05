@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox.model;
+package com.enndfp.eojcodesandbox.model.dto;
 
 import lombok.Data;
 

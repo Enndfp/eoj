@@ -1,6 +1,6 @@
 package com.enndfp.eojcodesandbox.util;
 
-import com.enndfp.eojcodesandbox.model.ExecuteMessage;
+import com.enndfp.eojcodesandbox.model.dto.ExecuteMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.StopWatch;
 

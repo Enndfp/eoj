@@ -1,7 +1,7 @@
 package com.enndfp.eojcodesandbox.controller;
 
-import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
-import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
+import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeRequest;
+import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeResponse;
 import com.enndfp.eojcodesandbox.service.CodeSandbox;
 import com.enndfp.eojcodesandbox.strategy.CodeSandboxManager;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,7 +1,7 @@
 package com.enndfp.eojcodesandbox.service.java;
 
-import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
-import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
+import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeRequest;
+import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeResponse;
 import org.springframework.stereotype.Component;
 
 /**
