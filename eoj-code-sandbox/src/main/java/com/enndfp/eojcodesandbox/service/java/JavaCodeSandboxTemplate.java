@@ -2,6 +2,9 @@ package com.enndfp.eojcodesandbox.service.java;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.dfa.FoundWord;
+import cn.hutool.dfa.WordTree;
+import com.enndfp.eojcodesandbox.enums.JudgeInfoMessageEnum;
 import com.enndfp.eojcodesandbox.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
@@ -16,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.enndfp.eojcodesandbox.constant.CodeBlackList.JAVA_BLACK_LIST;
 
 /**
  * Java代码沙箱模板
@@ -40,11 +45,35 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
      */
     public static final long TIME_OUT = 10000L;
 
+    /**
+     * 字典树，Hutool
+     */
+    private static final WordTree WORD_TREE;
+
+    static {
+        // 初始化字典树
+        WORD_TREE = new WordTree();
+        WORD_TREE.addWords(JAVA_BLACK_LIST);
+    }
+
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
         String code = executeCodeRequest.getCode();
         String language = executeCodeRequest.getLanguage();
         List<String> inputList = executeCodeRequest.getInputList();
+
+        //  校验代码中是否包含黑名单中的禁用词
+        FoundWord foundWord = WORD_TREE.matchWord(code);
+        if (foundWord != null) {
+            String message = "包含禁止词：" + foundWord.getFoundWord();
+            System.out.println(message);
+            return new ExecuteCodeResponse().builder()
+                    .outputList(new ArrayList<>())
+                    .message(message)
+                    .status(QuestionSubmitStatusEnum.FAILED.getValue())
+                    .judgeInfo(new JudgeInfo(JudgeInfoMessageEnum.DANGEROUS_OPERATION.getValue(), 0L, 0L))
+                    .build();
+        }
 
         // 1. 创建用户代码文件
         File userCodeFile = saveCodeToFile(code);
