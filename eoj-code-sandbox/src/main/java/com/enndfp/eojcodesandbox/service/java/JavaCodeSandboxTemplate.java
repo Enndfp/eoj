@@ -2,6 +2,7 @@ package com.enndfp.eojcodesandbox.service.java;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.enndfp.eojcodesandbox.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeRequest;
 import com.enndfp.eojcodesandbox.model.ExecuteCodeResponse;
 import com.enndfp.eojcodesandbox.model.ExecuteMessage;
@@ -157,32 +158,40 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         List<String> outputList = new ArrayList<>();
         long maxTime = 0;
+        long maxMemory = 0;
 
         // 2. 遍历执行消息列表
         for (ExecuteMessage executeMessage : executeMessageList) {
             // 2.1 获取错误消息
             String errorMessage = executeMessage.getErrorMessage();
             if (StrUtil.isNotBlank(errorMessage)) {
+                outputList.add(executeMessage.getMessage());
                 executeCodeResponse.setMessage(errorMessage);
-                executeCodeResponse.setStatus(3);
+                executeCodeResponse.setStatus(QuestionSubmitStatusEnum.FAILED.getValue());
                 break;
             }
             // 2.2 获取输出消息
             outputList.add(executeMessage.getMessage());
-            // 2.3 获取执行时间
+            // 2.3 获取执行时间和内存
             Long time = executeMessage.getTime();
             if (time != null) {
                 maxTime = Math.max(maxTime, time);
+            }
+            Long memory = executeMessage.getMemory();
+            if (memory != null) {
+                maxMemory = Math.max(maxMemory, memory);
             }
         }
 
         // 3. 判断是否全部执行成功，封装执行结果
         if (outputList.size() == executeMessageList.size()) {
-            executeCodeResponse.setStatus(1);
+            executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCESS.getValue());
+            executeCodeResponse.setMessage(QuestionSubmitStatusEnum.SUCCESS.getText());
         }
         executeCodeResponse.setOutputList(outputList);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setTime(maxTime);
+        judgeInfo.setMemory(maxMemory);
         executeCodeResponse.setJudgeInfo(judgeInfo);
 
         return executeCodeResponse;
