@@ -82,18 +82,18 @@
                     />
                   </div>
                 </a-tab-pane>
-                <a-tab-pane key="go" title="Go">
-                  <div class="answer-content">
-                    <MdViewer
-                      :value="'此题暂未提供 Go 答案'"
-                      class="markdown-viewer"
-                    />
-                  </div>
-                </a-tab-pane>
                 <a-tab-pane key="cpp" title="C++">
                   <div class="answer-content">
                     <MdViewer
                       :value="'此题暂未提供 C++ 答案'"
+                      class="markdown-viewer"
+                    />
+                  </div>
+                </a-tab-pane>
+                <a-tab-pane key="go" title="Go">
+                  <div class="answer-content">
+                    <MdViewer
+                      :value="'此题暂未提供 Go 答案'"
                       class="markdown-viewer"
                     />
                   </div>
@@ -203,11 +203,9 @@ import {
   QuestionVO,
 } from "../../../backendAPI";
 import { Message } from "@arco-design/web-vue";
-import { useRouter } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
 
-const router = useRouter();
 const question = ref<QuestionVO>();
 const form = ref<QuestionSubmitAddRequest>({
   language: "java", // 默认设置为Java
@@ -332,7 +330,6 @@ const doSubmit = async () => {
 const props = withDefaults(defineProps<Props>(), {
   id: () => "",
 });
-
 const loadData = async () => {
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
     props.id as any
