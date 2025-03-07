@@ -173,7 +173,7 @@
       </a-form-item>
 
       <!-- 判题用例配置 -->
-      <a-divider :margin="20" />
+      <a-divider :margin="10" />
       <a-form-item
         label="判题用例配置："
         tooltip="请填写判题用例配置"
@@ -181,60 +181,49 @@
         :merge-props="false"
         required
         :rules="[{ required: true, message: '判题用例配置是必填项！' }]"
-        style="margin-bottom: 20px"
+        style="margin-bottom: 10px"
       >
-        <!-- 动态生成判题用例表单项 -->
-        <a-form-item
-          v-for="(judgeCaseItem, index) of form.judgeCase"
-          :key="index"
-          no-style
+        <!-- 使用表格展示判题用例 -->
+        <a-table
+          :data="form.judgeCase"
+          :bordered="false"
+          class="judge-case-table"
+          :pagination="false"
         >
-          <a-space
-            direction="vertical"
-            style="width: 100%; margin-bottom: 10px"
-          >
-            <!-- 输入用例 -->
-            <a-form-item
-              :field="`form.judgeCase[${index}].input`"
-              :label="`第${index + 1}个输入用例:`"
-              tooltip="请输入测试的输入用例（例如：输入数据）"
-              style="margin-bottom: 10px"
-            >
-              <a-input
-                v-model="judgeCaseItem.input"
-                placeholder="请输入测试的输入用例"
-                style="width: 100%"
-              />
-            </a-form-item>
-
-            <!-- 输出用例 -->
-            <a-form-item
-              :field="`form.judgeCase[${index}].output`"
-              :label="`第${index + 1}个输出用例:`"
-              tooltip="请输入测试的输出用例（例如：预期结果）"
-              style="margin-bottom: 10px"
-            >
-              <a-input
-                v-model="judgeCaseItem.output"
-                placeholder="请输入测试的输出用例"
-                style="width: 100%"
-              />
-            </a-form-item>
-          </a-space>
-
-          <!-- 删除测试用例按钮 -->
-          <a-space size="large">
-            <a-button
-              type="outline"
-              status="danger"
-              @click="handleDelete(index)"
-              shape="round"
-              class="bold-text"
-            >
-              删除用例
-            </a-button>
-          </a-space>
-        </a-form-item>
+          <template #columns>
+            <a-table-column title="输入用例" data-index="input" align="center">
+              <template #cell="{ record }">
+                <a-input
+                  v-model="record.input"
+                  placeholder="请输入测试的输入用例"
+                  style="width: 100%"
+                />
+              </template>
+            </a-table-column>
+            <a-table-column title="输出用例" data-index="output" align="center">
+              <template #cell="{ record }">
+                <a-input
+                  v-model="record.output"
+                  placeholder="请输入测试的输出用例"
+                  style="width: 100%"
+                />
+              </template>
+            </a-table-column>
+            <a-table-column title="操作" width="60px" align="center">
+              <template #cell="{ rowIndex }">
+                <a-button
+                  type="text"
+                  status="danger"
+                  @click="handleDelete(rowIndex)"
+                  shape="circle"
+                  class="delete-button"
+                >
+                  <icon-delete size="20" />
+                </a-button>
+              </template>
+            </a-table-column>
+          </template>
+        </a-table>
 
         <!-- 新增测试用例按钮 -->
         <div style="margin-top: 10px">
@@ -243,10 +232,10 @@
             type="outline"
             status="success"
             shape="round"
-            class="bold-text"
-            style="width: 100%"
+            style="width: 100%; min-width: 150px"
+            class="add-button"
           >
-            新增测试用例
+            + 新增测试用例
           </a-button>
         </div>
       </a-form-item>
@@ -432,6 +421,63 @@ const onAnswerChange = (value: string) => {
   margin-bottom: 20px;
 }
 
+.judge-case-table {
+  border: 1px solid #e8e8e8;
+}
+
+/* 表格样式优化 */
+.judge-case-table {
+  border: 2px solid #f8f9fa; /* 使用页面背景颜色作为边框 */
+  background: #f7f9fc; /* 表格背景设置为更柔和的浅灰色 */
+}
+
+/* 表格头样式 */
+:deep(.arco-table-th) {
+  background-color: #f0f2f5; /* 表头背景稍微深一点 */
+  font-weight: bold;
+  color: #303133;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+/* 表格单元格样式 */
+:deep(.arco-table-td) {
+  background-color: #f7f9fc; /* 与表格背景一致 */
+  border-bottom: 1px solid #e8e8e8;
+  padding: 8px !important; /* 调整单元格内边距 */
+}
+
+/* 输入框样式 */
+:deep(.arco-input) {
+  background-color: #ffffff; /* 输入框背景设置为纯白色 */
+  border: 1px solid #d9d9d9; /* 边框颜色 */
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+/* 删除按钮样式 */
+.delete-button {
+  margin-left: 10px;
+  transition: transform 0.2s ease;
+}
+
+.delete-button:hover {
+  transform: scale(1.2); /* 悬停时放大效果 */
+}
+
+/* 新增按钮样式 */
+.add-button {
+  border-color: #52c41a;
+  color: #52c41a;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.add-button:hover {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #73d13d;
+}
+
+/* MdEditor 样式 */
 :deep(.bytemd-fullscreen.bytemd) {
   z-index: 100;
 }
