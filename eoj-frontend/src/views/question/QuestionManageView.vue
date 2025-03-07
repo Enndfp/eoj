@@ -146,15 +146,17 @@
 
       <!-- 题目答案展示 -->
       <template #answer="{ record }">
-        <a-button
-          class="bold-text"
-          shape="round"
-          type="outline"
-          size="small"
-          @click="showCode(record)"
-        >
-          展示代码
-        </a-button>
+        <a-tooltip content="查看答案">
+          <a-button
+            class="bold-text"
+            shape="circle"
+            type="outline"
+            size="small"
+            @click="showCode(record)"
+          >
+            <icon-code />
+          </a-button>
+        </a-tooltip>
       </template>
 
       <!-- 判题配置展示 -->
@@ -187,15 +189,17 @@
             :key="index"
             style="display: block; margin: 8px auto; cursor: pointer"
           >
-            <a-button
-              shape="round"
-              type="outline"
-              size="small"
-              @click="showJudgeCase(caseData)"
-              class="bold-text"
-            >
-              示例{{ index + 1 }}
-            </a-button>
+            <a-tooltip :content="`查看用例 ${index + 1}`">
+              <a-button
+                shape="circle"
+                type="outline"
+                size="small"
+                @click="showJudgeCase(caseData)"
+                class="bold-text"
+              >
+                <icon-file />
+              </a-button>
+            </a-tooltip>
           </span>
         </div>
       </template>

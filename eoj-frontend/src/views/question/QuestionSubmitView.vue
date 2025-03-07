@@ -167,13 +167,17 @@
 
       <!-- 查看代码按钮 -->
       <template #viewCode="{ record }">
-        <a-button
-          class="bold-text"
-          type="outline"
-          size="small"
-          @click="showCode(record)"
-          >查看代码
-        </a-button>
+        <a-tooltip content="查看代码">
+          <a-button
+            class="bold-text"
+            type="outline"
+            shape="circle"
+            size="small"
+            @click="showCode(record)"
+          >
+            <icon-code />
+          </a-button>
+        </a-tooltip>
       </template>
     </a-table>
     <!-- 🔹 代码查看模态框 -->
@@ -400,5 +404,9 @@ onMounted(() => {
 .formatted-time {
   font-weight: bold;
   color: #333;
+}
+
+:deep(.arco-btn-icon) {
+  font-size: 16px;
 }
 </style>

@@ -141,15 +141,16 @@
       <!-- 🔹 操作列 -->
       <template #optional="{ record }">
         <a-space>
-          <a-button
-            shape="round"
-            status="normal"
-            type="primary"
-            @click="toQuestionPage(record.id)"
-            class="bold-text"
-          >
-            做题
-          </a-button>
+          <a-tooltip content="去做题">
+            <a-button
+              shape="circle"
+              status="normal"
+              type="primary"
+              @click="toQuestionPage(record.id)"
+            >
+              <icon-edit class="bold-text" />
+            </a-button>
+          </a-tooltip>
         </a-space>
       </template>
     </a-table>
@@ -379,5 +380,9 @@ const doSubmit = () => {
 
 .button-group {
   margin-left: 10px;
+}
+
+:deep(.arco-btn-icon) {
+  font-size: 16px;
 }
 </style>
