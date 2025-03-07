@@ -160,7 +160,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from "vue";
 import {
-  Question,
   QuestionControllerService,
   QuestionQueryRequest,
 } from "../../../backendAPI";

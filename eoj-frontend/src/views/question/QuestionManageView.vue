@@ -501,7 +501,15 @@ const columns = [
   { title: "判题配置", slotName: "judgeConfig", align: "center", width: 380 },
   { title: "判题用例", slotName: "judgeCase", align: "center", width: 130 },
   { title: "创建者", slotName: "creator", align: "center", width: 150 },
-  { title: "创建时间", slotName: "createTime", align: "center", width: 160 },
+  {
+    title: "创建时间",
+    slotName: "createTime",
+    align: "center",
+    width: 160,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
   { title: "操作", slotName: "optional", align: "center", width: 160 },
 ];
 

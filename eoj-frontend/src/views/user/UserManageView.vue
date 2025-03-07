@@ -274,8 +274,22 @@ const columns = [
     width: 180,
   },
   { title: "用户角色", slotName: "userRole", align: "center" },
-  { title: "创建时间", slotName: "createTime", align: "center" },
-  { title: "更新时间", slotName: "updateTime", align: "center" },
+  {
+    title: "创建时间",
+    slotName: "createTime",
+    align: "center",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
+  {
+    title: "更新时间",
+    slotName: "updateTime",
+    align: "center",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
   { title: "操作", slotName: "optional", align: "center" },
 ];
 

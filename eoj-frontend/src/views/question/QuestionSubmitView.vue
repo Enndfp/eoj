@@ -343,7 +343,14 @@ const columns = [
   { title: "编程语言", slotName: "language", align: "center" },
   { title: "判题信息", slotName: "judgeInfo", align: "center" },
   { title: "判题状态", slotName: "status", align: "center" },
-  { title: "提交时间", slotName: "createTime", align: "center" },
+  {
+    title: "提交时间",
+    slotName: "createTime",
+    align: "center",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
   { title: "提交代码", slotName: "viewCode", align: "center" },
 ];
 
