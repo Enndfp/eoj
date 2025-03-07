@@ -330,7 +330,7 @@ const resetFilters = () => {
 /* 🔹 格式化数据 */
 const formatDate = (date: string) => moment(date).format("YYYY-MM-DD HH:mm");
 const formatLanguage = (lang: string) =>
-  lang === "cpp" ? "C++" : lang.toUpperCase();
+  lang === "cpp" ? "C++" : lang.charAt(0).toUpperCase() + lang.slice(1);
 
 /* 🔹 表格列 */
 const columns = [
