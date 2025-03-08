@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 题目提交查询请求
@@ -34,6 +35,11 @@ public class QuestionSubmitQueryRequest extends PageRequest implements Serializa
      * 题目 id
      */
     private Long questionId;
+
+    /**
+     * 题目 ID 列表
+     */
+    private List<Long> questionIds;
 
     /**
      * 创建用户 id

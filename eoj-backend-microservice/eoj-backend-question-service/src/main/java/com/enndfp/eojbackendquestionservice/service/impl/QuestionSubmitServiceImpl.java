@@ -161,6 +161,31 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     }
 
     @Override
+    public List<QuestionSubmitVO> listQuestionSubmitVOByQuestionIds(QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request) {
+        // 1. 校验请求参数
+        ThrowUtil.throwIf(questionSubmitQueryRequest.getQuestionIds() == null ||
+                        questionSubmitQueryRequest.getQuestionIds().isEmpty(),
+                ErrorCode.PARAMS_ERROR, "questionIds 不能为空");
+
+        // 2. 获取登录用户
+        User loginUser = userFeignClient.getLoginUser(request);
+
+        // 3. 构造查询条件
+        QueryWrapper<QuestionSubmit> queryWrapper = getQueryWrapper(questionSubmitQueryRequest);
+        queryWrapper.in("questionId", questionSubmitQueryRequest.getQuestionIds());
+
+        // 4. 查询数据库
+        List<QuestionSubmit> submitList = this.baseMapper.selectList(queryWrapper);
+
+        // 5. 转换为 VO 并脱敏
+        List<QuestionSubmitVO> questionSubmitVOList = submitList.stream()
+                .map(questionSubmit -> getQuestionSubmitVO(questionSubmit, loginUser))
+                .collect(Collectors.toList());
+
+        return questionSubmitVOList;
+    }
+
+    @Override
     public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
         QueryWrapper<QuestionSubmit> queryWrapper = new QueryWrapper<>();
 

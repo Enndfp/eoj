@@ -10,6 +10,7 @@ import com.enndfp.eojbackendmodel.model.entity.User;
 import com.enndfp.eojbackendmodel.model.vo.QuestionSubmitVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 题目提交服务
@@ -44,6 +45,15 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      * @return 题目提交列表
      */
     Page<QuestionSubmitVO> listQuestionSubmitVOByPage(QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request);
+
+    /**
+     * 获取题目提交列表（已脱敏）
+     *
+     * @param questionSubmitQueryRequest 题目提交查询请求
+     * @param request                    请求
+     * @return 题目提交列表
+     */
+    List<QuestionSubmitVO> listQuestionSubmitVOByQuestionIds(QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request);
 
     /**
      * 获取查询条件

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -283,5 +284,25 @@ public class QuestionController {
         Page<QuestionSubmitVO> questionSubmitVOPage = questionSubmitService.listQuestionSubmitVOByPage(questionSubmitQueryRequest, request);
 
         return ResultUtil.success(questionSubmitVOPage);
+    }
+
+    /**
+     * 根据题目 ID 列表获取题目提交记录（已脱敏）
+     *
+     * @param questionSubmitQueryRequest 查询请求
+     * @param request                    请求
+     * @return 题目提交列表
+     */
+    @PostMapping("/question_submit/list/questionIds")
+    @ApiOperation(value = "根据题目ID列表获取题目提交记录（已脱敏）")
+    public BaseResponse<List<QuestionSubmitVO>> listQuestionSubmitVOByQuestionIds(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest, HttpServletRequest request) {
+        // 1. 校验请求参数
+        ThrowUtil.throwIf(questionSubmitQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        ThrowUtil.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+
+        // 2. 处理批量查询逻辑
+        List<QuestionSubmitVO> questionSubmitVOList = questionSubmitService.listQuestionSubmitVOByQuestionIds(questionSubmitQueryRequest, request);
+
+        return ResultUtil.success(questionSubmitVOList);
     }
 }
