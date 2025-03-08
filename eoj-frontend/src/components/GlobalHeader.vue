@@ -112,7 +112,8 @@ import checkAccess from "@/access/checkAccess"; // 导入权限检查函数
 import ACCESS_ENUM from "@/access/accessEnum"; // 导入权限枚举
 import { SYSTEM_LOGO } from "@/constant"; // 导入常量
 import { LoginUserVO, UserControllerService } from "../../backendAPI"; // 导入用户信息类型和API接口
-import AccessEnum from "@/access/accessEnum"; // 导入权限枚举
+import AccessEnum from "@/access/accessEnum";
+import message from "@arco-design/web-vue/es/message"; // 导入权限枚举
 
 // 系统logo常量
 const systemLogo = SYSTEM_LOGO;
@@ -130,9 +131,25 @@ const loginUser: LoginUserVO = computed(
 ) as LoginUserVO;
 
 // 用户注销函数
-const logout = () => {
-  UserControllerService.userLogoutUsingPost(); // 调用后端注销接口
-  location.reload(); // 刷新页面
+const logout = async () => {
+  try {
+    // 调用后端注销接口
+    const res = await UserControllerService.userLogoutUsingPost();
+    if (res.code === 0) {
+      // 成功后清除 token
+      localStorage.removeItem("token");
+      // 显示成功提示
+      message.success("登出成功");
+      // 延迟刷新页面，给用户时间阅读提示
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    } else {
+      message.error("退出登录失败: " + res.message);
+    }
+  } catch (error) {
+    message.error("退出登录出错");
+  }
 };
 
 // 获取可以展示的路由（根据权限和meta配置）

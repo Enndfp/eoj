@@ -19,6 +19,7 @@ import type { QuestionUpdateRequest } from "../models/QuestionUpdateRequest";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
+import { BaseResponse_List_QuestionSubmitVO_ } from "../models/BaseResponse_List_QuestionSubmitVO_";
 
 export class QuestionControllerService {
   /**
@@ -234,6 +235,28 @@ export class QuestionControllerService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/question/question_submit/list/page",
+      body: questionSubmitQueryRequest,
+      errors: {
+        401: `Unauthorized`,
+        403: `Forbidden`,
+        404: `Not Found`,
+      },
+    });
+  }
+
+  /**
+   * 根据题目ID列表获取题目提交记录（已脱敏）
+   * @param questionSubmitQueryRequest questionSubmitQueryRequest
+   * @returns BaseResponse_List_QuestionSubmitVO_ OK
+   * @returns any Created
+   * @throws ApiError
+   */
+  public static listQuestionSubmitVoByQuestionIdsUsingPost(
+    questionSubmitQueryRequest: QuestionSubmitQueryRequest
+  ): CancelablePromise<BaseResponse_List_QuestionSubmitVO_ | any> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/question/question_submit/list/questionIds",
       body: questionSubmitQueryRequest,
       errors: {
         401: `Unauthorized`,

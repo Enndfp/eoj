@@ -93,9 +93,9 @@ const handleSubmit = async () => {
       path: "/",
       replace: true,
     });
-    message.success("登录成功！");
+    message.success("登录成功");
   } else {
-    message.error("登陆失败，" + res.message);
+    message.error("登录失败，" + res.message);
   }
 };
 const toIndex = () => {

@@ -93,6 +93,26 @@
       @page-change="onPageChange"
       @pageSizeChange="onPageSizeChange"
     >
+      <!-- 题目状态 -->
+      <template #status="{ record }">
+        <a-tooltip :content="getStatusTooltip({ questionId: record.id })">
+          <div class="status-icon">
+            <icon-check-circle-fill
+              v-if="isQuestionPassed({ questionId: record.id })"
+              style="color: #00b42a; font-size: 20px"
+            />
+            <icon-close-circle-fill
+              v-else-if="hasAttempted({ questionId: record.id })"
+              style="color: #f7ba1e; font-size: 20px"
+            />
+            <icon-minus-circle-fill
+              v-else
+              style="color: #86909c; font-size: 20px"
+            />
+          </div>
+        </a-tooltip>
+      </template>
+
       <!-- 题目名称（可点击） -->
       <template #title="{ record }">
         <a-link
@@ -158,18 +178,35 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import {
+  LoginUserVO,
   QuestionControllerService,
   QuestionQueryRequest,
 } from "../../../backendAPI";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
+import {
+  IconCheckCircleFill,
+  IconCloseCircleFill,
+  IconMinusCircleFill,
+} from "@arco-design/web-vue/es/icon";
+import { useStore } from "vuex";
 
 // 🔹 定义表格数据和分页信息
 const tableRef = ref();
 const dataList = ref([]);
 const total = ref(0);
+
+// 🔹 提交记录相关数据
+const submissions = ref([]); // 存储用户提交记录
+const submissionLoading = ref(false); // 加载状态
+
+// 获取登录用户信息
+const store = useStore();
+const loginUser: LoginUserVO = computed(
+  () => store.state.user?.loginUser
+) as LoginUserVO;
 
 // 🔹 定义搜索参数
 const searchParams = ref<QuestionQueryRequest>({
@@ -180,7 +217,45 @@ const searchParams = ref<QuestionQueryRequest>({
   current: 1,
 });
 
-// 🔹 加载数据
+// 🔹 加载用户提交记录
+const loadUserSubmissions = async () => {
+  submissionLoading.value = true;
+  try {
+    // 判断 userId 是否为空
+    if (!loginUser.value.id) {
+      submissions.value = [];
+      return;
+    }
+
+    // 获取当前页面所有题目 ID
+    const questionIds = dataList.value.map((question) => question.id);
+    if (questionIds.length === 0) {
+      submissions.value = [];
+      return;
+    }
+
+    // 调用批量查询接口
+    const res =
+      await QuestionControllerService.listQuestionSubmitVoByQuestionIdsUsingPost(
+        {
+          userId: loginUser.value.id,
+          questionIds: questionIds,
+        }
+      );
+
+    if (res.code === 0) {
+      submissions.value = res.data || [];
+    } else {
+      message.error("加载提交记录失败，" + res.message);
+    }
+  } catch (error) {
+    message.error("获取提交记录出错");
+  } finally {
+    submissionLoading.value = false;
+  }
+};
+
+// 🔹 在加载题目后再加载提交记录
 const loadData = async () => {
   const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
     ...searchParams.value,
@@ -190,8 +265,43 @@ const loadData = async () => {
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = res.data.total;
+    await loadUserSubmissions();
   } else {
     message.error("加载失败，" + res.message);
+  }
+};
+
+// 🔹 判断题目是否已通过
+const isQuestionPassed = ({ questionId }: { questionId: any }) => {
+  return submissions.value.some((submission) => {
+    // 判断是否有同一题目的提交记录，且状态为成功，且judgeInfo中message为Accepted
+    return (
+      submission.questionId === questionId &&
+      submission.status === 2 && // 成功状态
+      submission.judgeInfo &&
+      submission.judgeInfo.message === "Accepted"
+    );
+  });
+};
+
+// 🔹 判断题目是否尝试过（提交过但未通过）
+const hasAttempted = ({ questionId }: { questionId: any }) => {
+  return submissions.value.some((submission) => {
+    return (
+      submission.questionId === questionId &&
+      (!submission.judgeInfo || submission.judgeInfo.message !== "Accepted")
+    );
+  });
+};
+
+// 🔹 获取状态提示
+const getStatusTooltip = ({ questionId }: { questionId: any }) => {
+  if (isQuestionPassed({ questionId: questionId })) {
+    return "已通过";
+  } else if (hasAttempted({ questionId: questionId })) {
+    return "尝试过";
+  } else {
+    return "未尝试";
   }
 };
 
@@ -295,7 +405,14 @@ const getTagColor = (tag: string) => {
   }
 };
 
+// 添加状态列作为第一列
 const columns = [
+  {
+    title: "状态",
+    slotName: "status",
+    align: "center",
+    width: 80,
+  },
   {
     title: "题目",
     slotName: "title",
@@ -383,5 +500,11 @@ const doSubmit = () => {
 
 :deep(.arco-btn-icon) {
   font-size: 16px;
+}
+
+.status-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
