@@ -4,12 +4,12 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.dfa.FoundWord;
 import cn.hutool.dfa.WordTree;
-import com.enndfp.eojcodesandbox.model.enums.JudgeInfoMessageEnum;
-import com.enndfp.eojcodesandbox.model.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeRequest;
 import com.enndfp.eojcodesandbox.model.dto.ExecuteCodeResponse;
 import com.enndfp.eojcodesandbox.model.dto.ExecuteMessage;
 import com.enndfp.eojcodesandbox.model.dto.JudgeInfo;
+import com.enndfp.eojcodesandbox.model.enums.JudgeInfoMessageEnum;
+import com.enndfp.eojcodesandbox.model.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojcodesandbox.service.CodeSandbox;
 import com.enndfp.eojcodesandbox.util.ProcessUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -213,19 +213,14 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         }
 
         // 3. 判断是否全部执行成功，封装执行结果
-        JudgeInfo judgeInfo = new JudgeInfo();
-        judgeInfo.setTime(maxTime);
-        judgeInfo.setMemory(maxMemory);
-
         if (outputList.size() == executeMessageList.size()) {
             executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCESS.getValue());
             executeCodeResponse.setMessage(QuestionSubmitStatusEnum.SUCCESS.getText());
-            judgeInfo.setMessage("Success");
-        } else {
-            judgeInfo.setMessage("Failed");
         }
-
         executeCodeResponse.setOutputList(outputList);
+        JudgeInfo judgeInfo = new JudgeInfo();
+        judgeInfo.setTime(maxTime);
+        judgeInfo.setMemory(maxMemory);
         executeCodeResponse.setJudgeInfo(judgeInfo);
         System.out.println(executeCodeResponse);
 
