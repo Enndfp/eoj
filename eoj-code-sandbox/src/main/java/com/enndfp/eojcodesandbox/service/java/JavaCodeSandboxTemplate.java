@@ -213,14 +213,19 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         }
 
         // 3. 判断是否全部执行成功，封装执行结果
-        if (outputList.size() == executeMessageList.size()) {
-            executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCESS.getValue());
-            executeCodeResponse.setMessage(QuestionSubmitStatusEnum.SUCCESS.getText());
-        }
-        executeCodeResponse.setOutputList(outputList);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setTime(maxTime);
         judgeInfo.setMemory(maxMemory);
+
+        if (outputList.size() == executeMessageList.size()) {
+            executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCESS.getValue());
+            executeCodeResponse.setMessage(QuestionSubmitStatusEnum.SUCCESS.getText());
+            judgeInfo.setMessage("Success");
+        } else {
+            judgeInfo.setMessage("Failed");
+        }
+
+        executeCodeResponse.setOutputList(outputList);
         executeCodeResponse.setJudgeInfo(judgeInfo);
         System.out.println(executeCodeResponse);
 
