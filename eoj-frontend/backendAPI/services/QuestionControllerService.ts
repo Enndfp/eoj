@@ -20,6 +20,8 @@ import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 import { BaseResponse_List_QuestionSubmitVO_ } from "../models/BaseResponse_List_QuestionSubmitVO_";
+import { BaseResponse_QuestionRunResponse_ } from "../models/BaseResponse_QuestionRunResponse_";
+import { QuestionRunRequest } from "../models/QuestionRunRequest";
 
 export class QuestionControllerService {
   /**
@@ -214,6 +216,28 @@ export class QuestionControllerService {
       method: "POST",
       url: "/api/question/question_submit/do",
       body: questionSubmitAddRequest,
+      errors: {
+        401: `Unauthorized`,
+        403: `Forbidden`,
+        404: `Not Found`,
+      },
+    });
+  }
+
+  /**
+   * 运行代码
+   * @param questionRunRequest questionRunRequest
+   * @returns BaseResponse_QuestionRunResponse_ OK
+   * @returns any Created
+   * @throws ApiError
+   */
+  public static doQuestionRunUsingPost(
+    questionRunRequest: QuestionRunRequest
+  ): CancelablePromise<BaseResponse_QuestionRunResponse_ | any> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/question/question_run/do",
+      body: questionRunRequest,
       errors: {
         401: `Unauthorized`,
         403: `Forbidden`,

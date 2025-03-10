@@ -3,7 +3,7 @@
     <a-row :gutter="[24, 24]">
       <!-- 题目信息部分 -->
       <a-col :md="12" :xs="24">
-        <a-tabs default-active-key="question">
+        <a-tabs v-model:activeKey="activeTab" default-active-key="question">
           <!-- 题目内容 -->
           <a-tab-pane key="question" title="题目">
             <a-card v-if="question" :title="question.title">
@@ -247,18 +247,100 @@
             :language="form.language"
             :theme="form.theme"
             :handle-change="changeCode"
-            style="
-              border-radius: 3px;
-              border: 1px solid #ccc;
-              background-color: #f7f7f7;
-            "
+            :style="{
+              borderRadius: '3px',
+              border: '1px solid #ccc',
+              backgroundColor: '#f7f7f7',
+              height: editorHeight,
+            }"
           ></CodeEditor>
 
-          <a-divider :size="0"></a-divider>
+          <!-- 美化后的控制台 -->
+          <div class="console-container" v-show="consoleVisible">
+            <a-tabs v-model="activeConsoleTab" type="card" :animated="false">
+              <a-tab-pane key="testcase" title="测试用例">
+                <div class="console-input">
+                  <div v-if="firstTestCase" class="test-case-content">
+                    <div class="case-body">
+                      <div class="case-item">
+                        <span class="label">输入:</span>
+                        <div class="value">{{ firstTestCase.input }}</div>
+                      </div>
+                      <div class="case-item">
+                        <span class="label">输出:</span>
+                        <div class="value">{{ firstTestCase.output }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a-tab-pane>
+              <a-tab-pane key="result" title="执行结果">
+                <div class="console-result">
+                  <div v-if="testResult" class="result-panel">
+                    <div class="result-header">
+                      <a-tag
+                        :color="isPassed ? '#52c41a' : '#ff4d4f'"
+                        class="status-tag"
+                      >
+                        {{ isPassed ? "通过" : "未通过" }}
+                      </a-tag>
+                    </div>
+                    <div class="result-body">
+                      <div class="result-item">
+                        <span class="label">输入:</span>
+                        <div class="value">{{ testResult.input || "无" }}</div>
+                      </div>
+                      <div class="result-item">
+                        <span class="label">输出:</span>
+                        <div class="value">{{ testResult.output || "无" }}</div>
+                      </div>
+                      <div class="result-item">
+                        <span class="label">预期结果:</span>
+                        <div class="value">
+                          {{ firstTestCase?.output || "无" }}
+                        </div>
+                      </div>
+                      <div class="result-item" v-if="testResult.judgeInfo">
+                        <span class="label">内存:</span>
+                        <div class="value">
+                          {{ testResult.judgeInfo.memory }} KB
+                        </div>
+                      </div>
+                      <div class="result-item" v-if="testResult.judgeInfo">
+                        <span class="label">时间:</span>
+                        <div class="value">
+                          {{ testResult.judgeInfo.time }} ms
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else-if="testRunning" class="running-state">
+                    <a-spin>运行中...</a-spin>
+                    <p class="running-text">代码正在执行，请稍候...</p>
+                  </div>
+                  <div v-else class="empty-state">
+                    <a-empty description="请先运行代码" />
+                  </div>
+                </div>
+              </a-tab-pane>
+            </a-tabs>
+          </div>
 
-          <a-button type="primary" style="min-width: 200px" @click="doSubmit">
-            提交代码
-          </a-button>
+          <!-- 控制台按钮和操作按钮 -->
+          <a-divider :size="0"></a-divider>
+          <div class="console-footer">
+            <a-button type="text" @click="toggleConsole">
+              控制台
+              <IconDown v-if="consoleVisible" />
+              <IconUp v-else />
+            </a-button>
+            <a-space>
+              <a-button type="outline" @click="runCode" :loading="testRunning"
+                >运行
+              </a-button>
+              <a-button type="primary" @click="doSubmit">提交</a-button>
+            </a-space>
+          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -383,14 +465,20 @@ import { Message } from "@arco-design/web-vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
 import { useStore } from "vuex";
-import { IconEye } from "@arco-design/web-vue/es/icon";
-import { IconClockCircle, IconLoop } from "@arco-design/web-vue/es/icon";
+import {
+  IconClockCircle,
+  IconDown,
+  IconEye,
+  IconLoop,
+  IconUp,
+} from "@arco-design/web-vue/es/icon";
 import moment from "moment/moment";
 
 /* ---------------------- 状态管理 ---------------------- */
 
 // 题目相关状态
 const question = ref<QuestionVO>(); // 题目信息
+const activeTab = ref("question"); // 当前激活的标签页
 
 // 提交记录相关状态
 const submissionRecords = ref([]); // 提交记录列表
@@ -422,6 +510,73 @@ public class Main {
 const showTimer = ref(false); // 是否显示计时器
 const time = ref(0); // 计时器时间（秒）
 let intervalId: any = null; // 计时器 interval ID
+
+/* ---------------------- 控制台管理 ---------------------- */
+
+// 添加控制台相关状态
+const consoleVisible = ref(false); // 控制台是否显示
+const activeConsoleTab = ref("testcase"); // 当前激活的控制台选项卡
+const testResult = ref<any>(null); // 测试运行结果
+const testRunning = ref(false); // 是否正在运行
+const editorHeight = ref("66.7vh"); // 编辑器高度
+
+// 从题目中读取第一个测试用例
+const firstTestCase = computed(() => {
+  if (question.value?.judgeCase && question.value.judgeCase.length > 0) {
+    return question.value.judgeCase[0];
+  }
+  return null;
+});
+
+// 判断是否通过（对比输出和预期结果）
+const isPassed = computed(() => {
+  if (!testResult.value || !firstTestCase.value) return false;
+  return testResult.value.output === firstTestCase.value.output;
+});
+
+// 切换控制台显示状态
+const toggleConsole = () => {
+  consoleVisible.value = !consoleVisible.value;
+  editorHeight.value = consoleVisible.value ? "calc(66.7vh - 250px)" : "66.7vh";
+};
+
+// 运行代码
+const runCode = async () => {
+  if (!question.value?.id || !form.value.code) {
+    Message.error("请确保题目已加载且代码不为空");
+    return;
+  }
+  if (!firstTestCase.value) {
+    Message.error("无可用测试用例");
+    return;
+  }
+
+  // 设置运行状态并切换到“执行结果”选项卡
+  testRunning.value = true;
+  testResult.value = null;
+  consoleVisible.value = true;
+  editorHeight.value = "calc(66.7vh - 250px)";
+  activeConsoleTab.value = "result";
+
+  try {
+    const res = await QuestionControllerService.doQuestionRunUsingPost({
+      code: form.value.code,
+      language: form.value.language,
+      input: firstTestCase.value.input || "",
+    });
+
+    if (res.code === 0) {
+      testResult.value = res.data;
+      Message.success("运行成功");
+    } else {
+      Message.error(`运行失败: ${res.message || "未知错误"}`);
+    }
+  } catch (error: any) {
+    Message.error(`运行出错: ${error.message || "未知错误"}`);
+  } finally {
+    testRunning.value = false;
+  }
+};
 
 /* ---------------------- 表格和分页配置 ---------------------- */
 
@@ -488,20 +643,21 @@ const pagination = computed(() => ({
 
 /* ---------------------- 工具函数 ---------------------- */
 
-// 获取状态颜色
+// 获取状态颜色（提交记录表格用）
 const getStatusColor = (status: any): string => {
+  if (status === "pending") return "blue"; // 蓝色表示“判题中”
   const numericStatus = Number(status);
   const statusColors: { [key: number]: string } = {
-    0: "red", // 解答错误
-    1: "red", // 解答错误
-    2: "green", // 通过
-    3: "red", // 解答错误
+    0: "red",
+    1: "red",
+    2: "green",
+    3: "red",
   };
   return statusColors[numericStatus] || "gray";
 };
 
-// 获取状态文本
 const getStatusText = (status: any): string => {
+  if (status === "pending") return "判题中"; // 添加“判题中”状态
   const numericStatus = Number(status);
   const statusTexts: { [key: number]: string } = {
     0: "错误",
@@ -674,15 +830,38 @@ const handlePageChange = (page: number) => {
 // 提交代码
 const doSubmit = async () => {
   if (!question.value?.id) return;
-  const res = await QuestionControllerService.doQuestionSubmitUsingPost({
-    ...form.value,
-    questionId: question.value.id,
-  });
-  if (res.code === 0) {
-    Message.success("提交成功");
-    loadSubmitRecords(currentPage.value);
-  } else {
-    Message.error("提交失败，" + res.message);
+
+  try {
+    const res = await QuestionControllerService.doQuestionSubmitUsingPost({
+      ...form.value,
+      questionId: question.value.id,
+    });
+
+    if (res.code === 0) {
+      Message.success("提交成功");
+      activeTab.value = "submissions"; // 切换到提交记录tab
+
+      // 添加临时“判题中”记录
+      const tempSubmission = {
+        id: Date.now(), // 临时唯一ID
+        status: "pending", // 表示判题中
+        language: form.value.language,
+        code: form.value.code,
+        createTime: new Date().toISOString(),
+        judgeInfo: { time: "N/A", memory: "N/A" },
+        userVO: loginUser.value, // 当前用户信息
+      };
+      submissionRecords.value = [tempSubmission, ...submissionRecords.value];
+
+      // 异步刷新提交记录
+      setTimeout(async () => {
+        await loadSubmitRecords(1); // 刷新第一页
+      }, 1000); // 延迟1秒，可根据实际判题速度调整
+    } else {
+      Message.error("提交失败，" + res.message);
+    }
+  } catch (error: any) {
+    Message.error("提交出错: " + error.message);
   }
 };
 
@@ -766,17 +945,17 @@ onMounted(() => {
 }
 
 .modal-content {
-  padding: 16px; /* 减少顶部和底部内边距，使内容整体向上移动 */
+  padding: 16px;
 }
 
 .top-section {
-  margin-bottom: 16px; /* 减少底部外边距，整体向上 */
+  margin-bottom: 16px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  min-height: 60px; /* 确保左侧和右侧高度对齐 */
+  min-height: 60px;
 }
 
 .user-info .arco-avatar {
@@ -800,18 +979,167 @@ onMounted(() => {
 }
 
 .judge-message-top {
-  min-height: 60px; /* 确保右侧和左侧高度对齐 */
+  min-height: 60px;
   display: flex;
   align-items: center;
 }
 
 .submission-info {
-  margin-bottom: 16px; /* 减少底部外边距，整体向上 */
+  margin-bottom: 16px;
 }
 
 .code-container {
   border: 1px solid #ccc;
   border-radius: 3px;
+}
+
+/* ---------------------- 控制台样式优化 ---------------------- */
+.console-container {
+  margin-top: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  transition: all 0.3s ease;
+  min-height: 200px;
+}
+
+.console-input {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.test-case-content {
+  padding: 8px;
+}
+
+.case-body {
+  padding: 8px;
+}
+
+.case-item {
+  margin-bottom: 12px;
+}
+
+.case-item:last-child {
+  margin-bottom: 0;
+}
+
+.case-item .label {
+  font-weight: 600;
+  color: #555;
+  margin-right: 20px;
+  display: inline-block;
+  text-align: center;
+  width: 60px;
+}
+
+.case-item .value {
+  display: inline-block;
+  padding: 8px;
+  background-color: #f5f7fa;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  font-family: "Courier New", Courier, monospace;
+  color: #333;
+  word-break: break-all;
+  vertical-align: middle;
+}
+
+.console-result {
+  padding: 2.5px;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.result-panel {
+  padding: 8px;
+}
+
+.result-header {
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.status-tag {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.result-body {
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 6px;
+}
+
+.result-item {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-item .label {
+  font-weight: 600;
+  color: #555;
+  min-width: 80px;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.result-item .value {
+  font-family: "Courier New", Courier, monospace;
+  color: #333;
+  word-break: break-all;
+  flex: 1;
+  padding: 8px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+}
+
+.running-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.running-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #888;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+.console-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+}
+
+.console-footer .arco-btn-text {
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.console-footer .arco-btn-text svg {
+  margin-left: 5px;
 }
 
 /* ---------------------- 通用样式 ---------------------- */
