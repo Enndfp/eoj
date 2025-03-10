@@ -28,6 +28,9 @@ public class BaseResponse<T> implements Serializable {
      */
     private String message;
 
+    public BaseResponse() {
+    }
+
     /**
      * 构造函数
      *

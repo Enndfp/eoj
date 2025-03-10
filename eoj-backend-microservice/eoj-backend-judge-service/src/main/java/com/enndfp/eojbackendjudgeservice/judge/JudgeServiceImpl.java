@@ -11,14 +11,19 @@ import com.enndfp.eojbackendmodel.model.codesandbox.ExecuteCodeRequest;
 import com.enndfp.eojbackendmodel.model.codesandbox.ExecuteCodeResponse;
 import com.enndfp.eojbackendmodel.model.codesandbox.JudgeInfo;
 import com.enndfp.eojbackendmodel.model.dto.question.JudgeCase;
+import com.enndfp.eojbackendmodel.model.dto.question.QuestionRunRequest;
+import com.enndfp.eojbackendmodel.model.dto.question.QuestionRunResponse;
 import com.enndfp.eojbackendmodel.model.entity.Question;
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
+import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitLanguageEnum;
 import com.enndfp.eojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.enndfp.eojbackendserviceclient.service.QuestionFeignClient;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -98,5 +103,36 @@ public class JudgeServiceImpl implements JudgeService {
         QuestionSubmit questionSubmitResult = questionFeignClient.getQuestionSubmitById(questionSubmitId);
 
         return questionSubmitResult;
+    }
+
+    @Override
+    public QuestionRunResponse doQuestionRun(QuestionRunRequest questionRunRequest) {
+        // 1. 校验参数
+        String code = questionRunRequest.getCode();
+        String language = questionRunRequest.getLanguage();
+        String input = questionRunRequest.getInput();
+        ThrowUtil.throwIf(StringUtils.isAnyBlank(code, language, input), ErrorCode.PARAMS_ERROR, "参数不能为空");
+
+        QuestionSubmitLanguageEnum languageEnum = QuestionSubmitLanguageEnum.getEnumByValue(language);
+        ThrowUtil.throwIf(languageEnum == null, ErrorCode.PARAMS_ERROR, "编程语言不存在");
+
+        // 2. 调用代码沙箱执行代码
+        CodeSandbox codeSandbox = CodeSandboxFactory.newInstance(type);
+        codeSandbox = new CodeSandboxProxy(codeSandbox);
+
+        ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
+                .code(code)
+                .language(language)
+                .inputList(Collections.singletonList(input))
+                .build();
+        ExecuteCodeResponse executeCodeResponse = codeSandbox.executeCode(executeCodeRequest);
+
+        // 3. 构造运行结果
+        QuestionRunResponse questionRunResponse = new QuestionRunResponse();
+        questionRunResponse.setInput(input);
+        questionRunResponse.setOutput(executeCodeResponse.getOutputList().get(0));
+        questionRunResponse.setJudgeInfo(executeCodeResponse.getJudgeInfo());
+
+        return questionRunResponse;
     }
 }

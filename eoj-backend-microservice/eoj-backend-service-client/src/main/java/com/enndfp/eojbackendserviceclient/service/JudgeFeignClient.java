@@ -1,8 +1,12 @@
 package com.enndfp.eojbackendserviceclient.service;
 
+import com.enndfp.eojbackendcommon.common.BaseResponse;
+import com.enndfp.eojbackendmodel.model.dto.question.QuestionRunRequest;
+import com.enndfp.eojbackendmodel.model.dto.question.QuestionRunResponse;
 import com.enndfp.eojbackendmodel.model.entity.QuestionSubmit;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -21,4 +25,13 @@ public interface JudgeFeignClient {
      */
     @PostMapping("/do")
     QuestionSubmit doJudge(@RequestParam("questionSubmitId") Long questionSubmitId);
+
+    /**
+     * 运行代码
+     *
+     * @param questionRunRequest 运行代码请求
+     * @return 运行结果
+     */
+    @PostMapping("/do/run")
+    BaseResponse<QuestionRunResponse> doQuestionRun(@RequestBody QuestionRunRequest questionRunRequest);
 }

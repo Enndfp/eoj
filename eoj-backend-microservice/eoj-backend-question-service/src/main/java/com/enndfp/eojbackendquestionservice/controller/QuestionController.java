@@ -9,10 +9,7 @@ import com.enndfp.eojbackendcommon.common.ResultUtil;
 import com.enndfp.eojbackendcommon.constant.UserConstant;
 import com.enndfp.eojbackendcommon.exception.BusinessException;
 import com.enndfp.eojbackendcommon.exception.ThrowUtil;
-import com.enndfp.eojbackendmodel.model.dto.question.QuestionAddRequest;
-import com.enndfp.eojbackendmodel.model.dto.question.QuestionEditRequest;
-import com.enndfp.eojbackendmodel.model.dto.question.QuestionQueryRequest;
-import com.enndfp.eojbackendmodel.model.dto.question.QuestionUpdateRequest;
+import com.enndfp.eojbackendmodel.model.dto.question.*;
 import com.enndfp.eojbackendmodel.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.enndfp.eojbackendmodel.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.enndfp.eojbackendmodel.model.entity.Question;
@@ -22,6 +19,7 @@ import com.enndfp.eojbackendmodel.model.vo.QuestionVO;
 import com.enndfp.eojbackendquestionservice.manager.RedisLimiterManager;
 import com.enndfp.eojbackendquestionservice.service.QuestionService;
 import com.enndfp.eojbackendquestionservice.service.QuestionSubmitService;
+import com.enndfp.eojbackendserviceclient.service.JudgeFeignClient;
 import com.enndfp.eojbackendserviceclient.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +51,9 @@ public class QuestionController {
 
     @Resource
     private RedisLimiterManager redisLimiterManager;
+
+    @Resource
+    private JudgeFeignClient judgeFeignClient;
 
     /**
      * 创建题目
@@ -264,6 +265,37 @@ public class QuestionController {
         Long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, request);
 
         return ResultUtil.success(questionSubmitId);
+    }
+
+    /**
+     * 运行代码
+     *
+     * @param questionRunRequest 运行代码请求
+     * @param request            请求
+     * @return 运行结果
+     */
+    @PostMapping("/question_run/do")
+    @ApiOperation(value = "运行代码")
+    public BaseResponse<QuestionRunResponse> doQuestionRun(@RequestBody QuestionRunRequest questionRunRequest, HttpServletRequest request) {
+        // 1. 校验请求参数
+        ThrowUtil.throwIf(questionRunRequest == null, ErrorCode.PARAMS_ERROR);
+        ThrowUtil.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+
+        // 2. 登录用户校验
+        User loginUser = userFeignClient.getLoginUser(request);
+        ThrowUtil.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+
+        // 3. 限流校验
+        boolean rateLimit = redisLimiterManager.doRateLimit(loginUser.getId().toString());
+        ThrowUtil.throwIf(!rateLimit, ErrorCode.TOO_MANY_REQUEST, "运行过于频繁，请稍后再试");
+
+        // 4. 调用判题服务运行代码
+        BaseResponse<QuestionRunResponse> response = judgeFeignClient.doQuestionRun(questionRunRequest);
+        if (response == null || !Objects.equals(response.getCode(), 0)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "运行代码失败: " + (response != null ? response.getMessage() : "未知错误"));
+        }
+
+        return response;
     }
 
     /**

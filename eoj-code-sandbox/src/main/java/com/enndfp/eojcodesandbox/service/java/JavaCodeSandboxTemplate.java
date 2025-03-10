@@ -222,6 +222,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
         judgeInfo.setTime(maxTime);
         judgeInfo.setMemory(maxMemory);
         executeCodeResponse.setJudgeInfo(judgeInfo);
+        System.out.println(executeCodeResponse);
 
         return executeCodeResponse;
     }
