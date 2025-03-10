@@ -10,11 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-/**
- * Redisson 配置
- * 
- * @author Enndfp
- */
 @Data
 @Slf4j
 @Configuration
@@ -33,12 +28,14 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         // 构建 Redisson 配置
         Config config = new Config();
-        String redisAddress = "redis://" + host + ":" + port;
+        String redisAddress = String.format("redis://%s:%d", host, port);
 
         // 配置单节点连接
         config.useSingleServer()
                 .setDatabase(database)
-                .setAddress(redisAddress);
+                .setAddress(redisAddress)
+                .setConnectTimeout(10000)  // 设置连接超时
+                .setTimeout(3000);           // 设置命令超时
 
         // 处理密码为空的情况
         if (StringUtils.hasText(password)) {
@@ -46,11 +43,19 @@ public class RedissonConfig {
         }
 
         // 日志记录配置项
-        log.info("Connecting to Redis: {}", redisAddress);
+        log.info("Attempting to connect to Redis: {}", redisAddress);
         log.info("Redis Database: {}", database);
 
-        RedissonClient redisson = Redisson.create(config);
-        log.info("RedissonClient created successfully.");
+        RedissonClient redisson;
+        try {
+            redisson = Redisson.create(config);
+            // 测试连接
+            redisson.getKeys().count();
+            log.info("RedissonClient connected successfully to Redis: {}", redisAddress);
+        } catch (Exception e) {
+            log.error("Failed to connect to Redis: {}, error: {}", redisAddress, e.getMessage(), e);
+            throw new RuntimeException("RedissonClient initialization failed: " + e.getMessage());
+        }
         return redisson;
     }
 }
