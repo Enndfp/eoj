@@ -194,13 +194,13 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
             // 2.1 获取错误消息
             String errorMessage = executeMessage.getErrorMessage();
             if (StrUtil.isNotBlank(errorMessage)) {
-                outputList.add(executeMessage.getMessage());
+                outputList.add(executeMessage.getMessage().trim());
                 executeCodeResponse.setMessage(errorMessage);
                 executeCodeResponse.setStatus(QuestionSubmitStatusEnum.FAILED.getValue());
                 break;
             }
             // 2.2 获取输出消息
-            outputList.add(executeMessage.getMessage());
+            outputList.add(executeMessage.getMessage().trim());
             // 2.3 获取执行时间和内存
             Long time = executeMessage.getTime();
             if (time != null) {
