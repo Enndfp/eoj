@@ -73,7 +73,7 @@ The core function of the system is to compare the code submitted by the user wit
 
 This diagram shows the key steps of user operation, background processing and data flow in the system. It includes the interaction process of user submitting code on the front-end page, back-end task processing and question judging service, and elaborates on the whole process from task submission to the final result returned to the user.
 
-![image-20250212221214081](https://img.enndfp.cn/202502122212351.png)
+![image-20250312150237368](https://img.enndfp.cn/202503121502604.png)
 
 ------
 
@@ -109,19 +109,37 @@ This diagram shows the key steps of user operation, background processing and da
 
 ### 🌐 System interface and display
 
-#### Question management and search interface
+EOJ system provides a set of fully functional and interactive user interfaces, which fully reflects the modern design concept and excellent user experience:
 
-In the administrator page, administrators can easily create, edit and delete questions. At the same time, users can search and view detailed information of different questions through the front-end page.
+- **Question list page** 📋: As shown in Figure 1, a clear table layout is used to display the question list, including key information such as status, question name, label, pass rate and difficulty. The top provides a multi-dimensional filtering function, which supports accurate search by question name, label and difficulty, helping users to quickly locate the required programming challenges. The color logo intuitively displays the question status: a green check mark indicates that it has passed, a yellow error indicates that the attempt has not passed, and a gray bar indicates a question that has not been attempted.
 
-![image-20250213122756990](https://img.enndfp.cn/202502131227270.png)
+![image-20250312150346416](https://img.enndfp.cn/202503121515059.png)
 
-#### User code submission and evaluation result display
+- **Question details and code editing page** 💻: As shown in Figure 2, the left side shows the detailed description of the question, input and output requirements and examples, and the right side is a professional code editor based on Monaco Editor, which supports syntax highlighting and code completion. The interface provides a language selection drop-down box and theme switching function. The prompt information above the editor guides users to write code as required. The time and memory limits are clearly displayed at the bottom of the page, and "Run" and "Submit" buttons are provided to facilitate users to test and submit code.
 
-Users can write code directly on the page and view the evaluation results after submission. The system will give compilation, execution output and judgment feedback.
+![image-20250312150430703](https://img.enndfp.cn/202503121519288.png)
 
-![image-20250213123308841](https://img.enndfp.cn/202502131233230.png)
+- **Question answer and execution result page** 🧩: As shown in Figure 3, the system provides a double-column layout with a question solution area on the left and a blank editing area on the right. Users can refer to the sample answers for learning and improvement. The sample answers use color syntax highlighting to enhance readability, and contain Chinese comments to help understand the algorithm ideas. The test case area at the bottom can display the code running results in real time, making it easier for users to verify their own solutions.
 
-![image-20250213123325755](https://img.enndfp.cn/202502131233110.png)
+![image-20250312152427963](https://img.enndfp.cn/202503121524222.png)
+
+- **Submission record page** 📊: As shown in Figure 4, the system displays all submission records of users in a table, including fields such as submitter, title name, programming language, evaluation information, judgment status, and submission time. Use the visual contrast of green success and red failure to clearly display the code evaluation results. Support filtering by title name, programming language, and judgment status, so that users can track their learning progress.
+
+![image-20250312150530964](https://img.enndfp.cn/202503121521857.png)
+
+- **Submission code details pop-up window** 🔍: As shown in Figure 5, click the submission record to view detailed evaluation information, including indicators such as code content, execution status, running time, and memory usage. The code area provides line numbers and complete syntax highlighting, which makes it easy for users to review and analyze their solutions. The status indicator uses green "Accepted" to clearly indicate the passing status.
+
+![image-20250312150512342](https://img.enndfp.cn/202503121522141.png)
+
+- **Topic management page** 📐: As shown in Figure 6, the system presents all topics in a clear table format, including key information such as topic name, topic description, topic label️, topic difficulty, number of submissions, number of passes, pass rate, time limit, memory limit, creator and creation time. The top of the page provides filtering functions for topic name, topic label️, topic difficulty and creator, which allows users to quickly locate the required topic. There is a paging control at the bottom of the page to support administrators to browse a large number of topics. The entire page design is simple and intuitive, which is convenient for administrators to manage topics.
+
+![image-20250312150622096](https://img.enndfp.cn/202503121538676.png)
+
+- **Question Editing Interface** ⚙️: As shown in Figure 7, administrators can create and edit questions through step-by-step forms, including setting basic information, question description, standard answers, question configuration, and test cases. The interface design is concise and clear, and each step has clear instructions and mandatory items to ensure the integrity and standardization of question creation.
+
+![image-20250312150734114](https://img.enndfp.cn/202503121536195.png)
+
+The entire system UI uses blue as the main color, with a white background and bright color logos, which is in line with the design trend of modern Web applications. The interface layout is reasonable and the operation process is clear, providing users with an immersive programming learning and practice environment. The system's responsive design ensures a good user experience on different devices.
 
 ------
 
