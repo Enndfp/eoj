@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox.service.java;
+package com.enndfp.eojcodesandbox.service.cpp;
 
 import cn.hutool.dfa.WordTree;
 import com.enndfp.eojcodesandbox.model.dto.ExecuteMessage;
@@ -11,20 +11,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.enndfp.eojcodesandbox.constant.CodeBlackList.JAVA_BLACK_LIST;
+import static com.enndfp.eojcodesandbox.constant.CodeBlackList.CPP_BLACK_LIST;
 
 /**
- * Java代码沙箱模板
+ * C++代码沙箱模板
  *
  * @author Enndfp
  */
 @Slf4j
-public class JavaCodeSandboxTemplate extends CodeSandboxTemplate {
+public class CppCodeSandboxTemplate extends CodeSandboxTemplate {
 
     /**
-     * 全局Java类名称
+     * 全局C++源文件名称
      */
-    public static final String GLOBAL_JAVA_CLASS_NAME = "Main.java";
+    private static final String GLOBAL_CPP_FILE_NAME = "main.cpp";
+
+    /**
+     * 编译后的可执行文件名称
+     */
+    private static final String EXECUTABLE_NAME = "main";
 
     /**
      * 字典树，Hutool
@@ -34,7 +39,7 @@ public class JavaCodeSandboxTemplate extends CodeSandboxTemplate {
     static {
         // 初始化字典树
         WORD_TREE = new WordTree();
-        WORD_TREE.addWords(JAVA_BLACK_LIST);
+        WORD_TREE.addWords(CPP_BLACK_LIST);
     }
 
     @Override
@@ -44,12 +49,14 @@ public class JavaCodeSandboxTemplate extends CodeSandboxTemplate {
 
     @Override
     protected String getCodeFileName() {
-        return GLOBAL_JAVA_CLASS_NAME;
+        return GLOBAL_CPP_FILE_NAME;
     }
 
     @Override
     protected ExecuteMessage compileFile(File codeFile) {
-        String compileCmd = String.format("javac -encoding utf-8 %s", codeFile.getAbsoluteFile());
+        String parentPath = codeFile.getParentFile().getAbsolutePath();
+        String executablePath = parentPath + File.separator + EXECUTABLE_NAME;
+        String compileCmd = String.format("g++ -o %s %s -std=c++17", executablePath, codeFile.getAbsolutePath());
         try {
             Process compileProcess = Runtime.getRuntime().exec(compileCmd);
             ExecuteMessage executeMessage = ProcessUtil.runProcessAndGetMessage(compileProcess, "编译");
@@ -65,13 +72,12 @@ public class JavaCodeSandboxTemplate extends CodeSandboxTemplate {
 
     @Override
     protected List<ExecuteMessage> runFile(File codeFile, List<String> inputList) {
-        // 1. 获取用户代码文件的父目录
-        String codeParentPath = codeFile.getParentFile().getAbsolutePath();
+        String parentPath = codeFile.getParentFile().getAbsolutePath();
+        String executablePath = parentPath + File.separator + EXECUTABLE_NAME + ".exe";
         List<ExecuteMessage> executeMessageList = new ArrayList<>();
 
-        // 2. 遍历输入参数列表，执行用户代码
         for (String inputArgs : inputList) {
-            String runCmd = String.format("java -Dfile.encoding=UTF-8 -cp %s Main %s", codeParentPath, inputArgs);
+            String runCmd = String.format("\"%s\" %s", executablePath, inputArgs);
             try {
                 Process runProcess = Runtime.getRuntime().exec(runCmd);
                 // 超时控制

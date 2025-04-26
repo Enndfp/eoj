@@ -1,7 +1,9 @@
 package com.enndfp.eojcodesandbox.strategy;
 
-import com.enndfp.eojcodesandbox.service.java.JavaNativeCodeSandbox;
 import com.enndfp.eojcodesandbox.service.CodeSandbox;
+import com.enndfp.eojcodesandbox.service.cpp.CppNativeCodeSandbox;
+import com.enndfp.eojcodesandbox.service.go.GoNativeCodeSandbox;
+import com.enndfp.eojcodesandbox.service.java.JavaNativeCodeSandbox;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -23,6 +25,8 @@ public class CodeSandboxManager {
     static {
         // 初始化沙箱
         sandboxMap.put("java", new JavaNativeCodeSandbox());
+        sandboxMap.put("cpp", new CppNativeCodeSandbox());
+        sandboxMap.put("go", new GoNativeCodeSandbox());
         // TODO: 以后可以在此处继续添加其他语言的沙箱实现
     }
 

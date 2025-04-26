@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox.service.java;
+package com.enndfp.eojcodesandbox.service.go;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.dfa.WordTree;
@@ -17,21 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.enndfp.eojcodesandbox.constant.CodeBlackList.JAVA_BLACK_LIST;
+import static com.enndfp.eojcodesandbox.constant.CodeBlackList.GO_BLACK_LIST;
 
 /**
- * Java Docker 代码沙箱
+ * Go Docker 代码沙箱
  *
  * @author Enndfp
  */
 @Slf4j
 @Component
-public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
+public class GoDockerCodeSandbox extends DockerCodeSandboxTemplate {
 
     /**
-     * 全局 Java 类名称
+     * 全局 Go 文件名称
      */
-    public static final String GLOBAL_JAVA_CLASS_NAME = "Main.java";
+    public static final String GLOBAL_GO_FILE_NAME = "main.go";
 
     /**
      * 字典树，Hutool
@@ -41,7 +41,7 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
     static {
         // 初始化字典树
         WORD_TREE = new WordTree();
-        WORD_TREE.addWords(JAVA_BLACK_LIST);
+        WORD_TREE.addWords(GO_BLACK_LIST);
     }
 
     @Override
@@ -51,7 +51,12 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
 
     @Override
     protected String getCodeFileName() {
-        return GLOBAL_JAVA_CLASS_NAME;
+        return GLOBAL_GO_FILE_NAME;
+    }
+
+    @Override
+    protected String getDockerImage() {
+        return "golang:1.21-alpine";
     }
 
     @Override
@@ -60,14 +65,10 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
     }
 
     @Override
-    protected String getDockerImage() {
-        return "openjdk:8-alpine";
-    }
-
-    @Override
     protected ExecuteMessage compileFileInContainer(DockerClient dockerClient, String containerId, File codeFile) {
         StopWatch stopWatch = new StopWatch();
-        String[] cmdArray = new String[]{"javac", "-encoding", "utf-8", "/app/Main.java"};
+        // Go 编译命令：go build -o /app/main /app/main.go
+        String[] cmdArray = new String[]{"go", "build", "-o", "/app/main", "/app/main.go"};
         ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                 .withCmd(cmdArray)
                 .withAttachStderr(true)
@@ -113,7 +114,8 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
         for (String inputArgs : inputList) {
             StopWatch stopWatch = new StopWatch();
             String[] inputArgsArray = inputArgs.split(" ");
-            String[] cmdArray = ArrayUtil.append(new String[]{"java", "-cp", "/app", "Main"}, inputArgsArray);
+            // Go 执行命令：/app/main [args]
+            String[] cmdArray = ArrayUtil.append(new String[]{"/app/main"}, inputArgsArray);
 
             ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                     .withCmd(cmdArray)

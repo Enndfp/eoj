@@ -1,4 +1,4 @@
-package com.enndfp.eojcodesandbox.service.java;
+package com.enndfp.eojcodesandbox.service.cpp;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.dfa.WordTree;
@@ -17,21 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.enndfp.eojcodesandbox.constant.CodeBlackList.JAVA_BLACK_LIST;
+import static com.enndfp.eojcodesandbox.constant.CodeBlackList.CPP_BLACK_LIST;
 
 /**
- * Java Docker 代码沙箱
+ * C++ Docker 代码沙箱
  *
  * @author Enndfp
  */
 @Slf4j
 @Component
-public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
+public class CppDockerCodeSandbox extends DockerCodeSandboxTemplate {
 
     /**
-     * 全局 Java 类名称
+     * 全局 C++ 文件名称
      */
-    public static final String GLOBAL_JAVA_CLASS_NAME = "Main.java";
+    public static final String GLOBAL_CPP_FILE_NAME = "main.cpp";
 
     /**
      * 字典树，Hutool
@@ -41,7 +41,7 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
     static {
         // 初始化字典树
         WORD_TREE = new WordTree();
-        WORD_TREE.addWords(JAVA_BLACK_LIST);
+        WORD_TREE.addWords(CPP_BLACK_LIST);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
 
     @Override
     protected String getCodeFileName() {
-        return GLOBAL_JAVA_CLASS_NAME;
+        return GLOBAL_CPP_FILE_NAME;
     }
 
     @Override
@@ -61,13 +61,13 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
 
     @Override
     protected String getDockerImage() {
-        return "openjdk:8-alpine";
+        return "gcc:latest";
     }
 
     @Override
     protected ExecuteMessage compileFileInContainer(DockerClient dockerClient, String containerId, File codeFile) {
         StopWatch stopWatch = new StopWatch();
-        String[] cmdArray = new String[]{"javac", "-encoding", "utf-8", "/app/Main.java"};
+        String[] cmdArray = new String[]{"g++", "-o", "/app/main", "/app/main.cpp", "-std=c++17"};
         ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                 .withCmd(cmdArray)
                 .withAttachStderr(true)
@@ -113,7 +113,7 @@ public class JavaDockerCodeSandbox extends DockerCodeSandboxTemplate {
         for (String inputArgs : inputList) {
             StopWatch stopWatch = new StopWatch();
             String[] inputArgsArray = inputArgs.split(" ");
-            String[] cmdArray = ArrayUtil.append(new String[]{"java", "-cp", "/app", "Main"}, inputArgsArray);
+            String[] cmdArray = ArrayUtil.append(new String[]{"/app/main"}, inputArgsArray);
 
             ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                     .withCmd(cmdArray)

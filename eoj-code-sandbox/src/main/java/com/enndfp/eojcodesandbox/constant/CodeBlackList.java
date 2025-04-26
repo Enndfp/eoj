@@ -75,4 +75,20 @@ public interface CodeBlackList {
             "BufferedReader", "FileReader", "FileWriter", "FileInputStream", "FileOutputStream", "PrintWriter",
             "InputStreamReader", "Scanner.nextLine", "Scanner.nextInt", "Scanner.nextDouble"
     );
+
+    /**
+     * C++代码黑名单
+     */
+    List<String> CPP_BLACK_LIST = Arrays.asList(
+            "system", "popen", "fork", "exec", "ProcessBuilder",
+            "Runtime", "shutdown", "fopen", "ifstream", "ofstream"
+    );
+
+    /**
+     * Go代码黑名单
+     */
+    List<String> GO_BLACK_LIST = Arrays.asList(
+            "os.Execute", "exec.Command", "syscall", "os.Remove",
+            "ioutil.WriteFile", "os.Open", "os.Create"
+    );
 }
