@@ -240,7 +240,7 @@ const statusLabels: Record<number, string> = {
 const getLanguageColor = (lang: string) => {
   const colors: Record<string, string> = {
     java: "#f89820", // Java - 橙色（Java 官方 Logo 颜色）
-    "c++": "#00599C", // C++ - 深蓝色（C++ Logo 颜色）
+    cpp: "#00599C", // C++ - 深蓝色（C++ Logo 颜色）
     go: "#00ADD8", // Go - 天蓝色（Go 语言 Logo 颜色）
   };
   return colors[lang] || "gray"; // 默认灰色，防止未匹配语言

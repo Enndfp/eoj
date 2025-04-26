@@ -120,7 +120,7 @@
                 <!-- 语言列 -->
                 <template #language="{ record }">
                   <span class="bold-text">
-                    {{ capitalizeFirstLetter(record.language) }}
+                    {{ getLanguageDisplayName(record.language) }}
                   </span>
                 </template>
 
@@ -399,7 +399,7 @@
             </a-descriptions-item>
             <a-descriptions-item label="语言">
               <span class="bold-text">{{
-                capitalizeFirstLetter(selectedSubmission.language)
+                getLanguageDisplayName(selectedSubmission.language)
               }}</span>
             </a-descriptions-item>
             <a-descriptions-item label="执行用时">
@@ -514,7 +514,11 @@ int main(int argc, char* argv[]) {
  */
 package main
 
-import ("fmt" "os" "strconv")
+import (
+    "fmt"
+    "os"
+    "strconv"
+)
 
 func main() {
     // 在此编写您的解题代码
@@ -946,7 +950,7 @@ const doSubmit = async () => {
 
       setTimeout(async () => {
         await loadSubmitRecords(1);
-      }, 1000);
+      }, 2000);
     } else {
       Message.error("提交失败，" + res.message);
     }
