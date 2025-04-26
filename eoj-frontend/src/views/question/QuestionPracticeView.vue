@@ -77,26 +77,17 @@
               >
                 <a-tab-pane key="java" title="Java">
                   <div class="answer-content">
-                    <MdViewer
-                      :value="question?.answer ?? '此题暂未提供 Java 答案'"
-                      class="markdown-viewer"
-                    />
+                    <MdViewer :value="answerMap.java" class="markdown-viewer" />
                   </div>
                 </a-tab-pane>
                 <a-tab-pane key="cpp" title="C++">
                   <div class="answer-content">
-                    <MdViewer
-                      :value="'此题暂未提供 C++ 答案'"
-                      class="markdown-viewer"
-                    />
+                    <MdViewer :value="answerMap.cpp" class="markdown-viewer" />
                   </div>
                 </a-tab-pane>
                 <a-tab-pane key="go" title="Go">
                   <div class="answer-content">
-                    <MdViewer
-                      :value="'此题暂未提供 Go 答案'"
-                      class="markdown-viewer"
-                    />
+                    <MdViewer :value="answerMap.go" class="markdown-viewer" />
                   </div>
                 </a-tab-pane>
               </a-tabs>
@@ -504,25 +495,26 @@ public class Main {
   `,
   cpp: `/*
  * 请根据题目要求编写解题代码
- * 1. 请从标准输入读取数据
+ * 1. 从命令行参数读取数据
  * 2. 输出结果到标准输出
  */
 #include <iostream>
+
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     // 在此编写您的解题代码
     return 0;
 }
   `,
   go: `/*
  * 请根据题目要求编写解题代码
- * 1. 请从标准输入读取数据
+ * 1. 从命令行参数读取数据
  * 2. 输出结果到标准输出
  */
 package main
 
-import "fmt"
+import ("fmt" "os" "strconv")
 
 func main() {
     // 在此编写您的解题代码
@@ -549,6 +541,13 @@ const testResult = ref<any>(null);
 const testRunning = ref(false);
 const editorHeight = ref("66.7vh");
 
+// 答案映射状态
+const answerMap = ref<Record<string, string>>({
+  java: "此题暂未提供 Java 答案",
+  cpp: "此题暂未提供 C++ 答案",
+  go: "此题暂未提供 Go 答案",
+});
+
 // 从题目中读取第一个测试用例
 const firstTestCase = computed(() => {
   if (question.value?.judgeCase && question.value.judgeCase.length > 0) {
@@ -568,6 +567,45 @@ const toggleConsole = () => {
   consoleVisible.value = !consoleVisible.value;
   editorHeight.value = consoleVisible.value ? "calc(66.7vh - 250px)" : "66.7vh";
 };
+
+// 解析答案代码块
+const parseAnswerCodeBlocks = (markdown: string | undefined) => {
+  if (!markdown) {
+    answerMap.value = {
+      java: "此题暂未提供 Java 答案",
+      cpp: "此题暂未提供 C++ 答案",
+      go: "此题暂未提供 Go 答案",
+    };
+    return;
+  }
+
+  // 初始化 answerMap
+  answerMap.value = {
+    java: "此题暂未提供 Java 答案",
+    cpp: "此题暂未提供 C++ 答案",
+    go: "此题暂未提供 Go 答案",
+  };
+
+  // 正则表达式匹配 ```language ... ``` 代码块
+  const codeBlockRegex = /```(java|cpp|go)\n([\s\S]*?)\n```/g;
+  let match;
+  while ((match = codeBlockRegex.exec(markdown)) !== null) {
+    const language = match[1];
+    const code = match[2].trim();
+    if (language in answerMap.value) {
+      answerMap.value[language] = `\`\`\`${language}\n${code}\n\`\`\``;
+    }
+  }
+};
+
+// 监听 question.answer 变化，解析代码块
+watch(
+  () => question.value?.answer,
+  (newAnswer) => {
+    parseAnswerCodeBlocks(newAnswer);
+  },
+  { immediate: true }
+);
 
 // 运行代码
 const runCode = async () => {
@@ -607,7 +645,6 @@ const runCode = async () => {
 };
 
 /* ---------------------- 表格和分页配置 ---------------------- */
-
 const columns = [
   {
     title: "状态",
@@ -668,7 +705,6 @@ const pagination = computed(() => ({
 }));
 
 /* ---------------------- 工具函数 ---------------------- */
-
 const getStatusColor = (status: any): string => {
   if (status === "pending") return "blue";
   const numericStatus = Number(status);
@@ -773,7 +809,6 @@ const getThemeDisplayName = (theme: string): string => {
 };
 
 /* ---------------------- 计时器逻辑 ---------------------- */
-
 const startTimer = () => {
   showTimer.value = true;
 };
@@ -801,8 +836,6 @@ onUnmounted(() => {
 });
 
 /* ---------------------- 语言和主题切换逻辑 ---------------------- */
-
-// 监听语言切换并加载对应模板
 watch(
   () => form.value.language,
   (newLanguage, oldLanguage) => {
@@ -819,7 +852,6 @@ watch(
   { immediate: true }
 );
 
-// 监听主题切换
 watch(
   () => form.value.theme,
   (newTheme, oldTheme) => {
@@ -831,7 +863,6 @@ watch(
 );
 
 /* ---------------------- 数据加载和提交逻辑 ---------------------- */
-
 interface Props {
   id: string;
 }
@@ -934,7 +965,6 @@ const changeCode = (value: string) => {
 };
 
 /* ---------------------- 生命周期钩子 ---------------------- */
-
 onMounted(() => {
   loadData();
   loadSubmitRecords();

@@ -22,7 +22,6 @@
           allow-clear
           style="min-width: 150px"
         >
-          <!-- 选择不同的标签 -->
           <a-option v-for="tag in tags" :key="tag.value" :value="tag.value">
             <a-tag :color="tag.color" class="bold-text">{{ tag.name }}</a-tag>
           </a-option>
@@ -257,12 +256,48 @@
     <a-modal
       v-model:visible="isCodeModalVisible"
       title="题目答案"
-      width="850px"
+      width="900px"
       class="code-modal"
+      :footer="false"
     >
-      <div class="code-box">
-        <pre><code class="language-java" v-html="highlightedCode"></code></pre>
-      </div>
+      <a-tabs
+        default-active-key="java"
+        type="rounded"
+        size="small"
+        position="top"
+        class="answer-tabs"
+      >
+        <a-tab-pane key="java" title="Java">
+          <div class="code-box">
+            <MdViewer
+              v-if="answerMap.java"
+              :value="answerMap.java"
+              style="max-height: 500px; overflow-y: auto"
+            />
+            <a-empty v-else description="此题暂未提供 Java 答案" />
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="cpp" title="C++">
+          <div class="code-box">
+            <MdViewer
+              v-if="answerMap.cpp"
+              :value="answerMap.cpp"
+              style="max-height: 500px; overflow-y: auto"
+            />
+            <a-empty v-else description="此题暂未提供 C++ 答案" />
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="go" title="Go">
+          <div class="code-box">
+            <MdViewer
+              v-if="answerMap.go"
+              :value="answerMap.go"
+              style="max-height: 500px; overflow-y: auto"
+            />
+            <a-empty v-else description="此题暂未提供 Go 答案" />
+          </div>
+        </a-tab-pane>
+      </a-tabs>
     </a-modal>
 
     <!-- 🔹 判题用例模态框 -->
@@ -277,11 +312,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Message } from "@arco-design/web-vue";
-import hljs from "highlight.js";
-import "highlight.js/styles/github.css";
+import MdViewer from "@/components/MdViewer.vue";
 import {
   Question,
   QuestionControllerService,
@@ -307,18 +341,54 @@ const searchParams = ref<QuestionQueryRequest>({
 
 // 🔹 代码查看模态框状态
 const isCodeModalVisible = ref(false);
-const highlightedCode = ref("");
+const answerMap = ref<Record<string, string>>({
+  java: "",
+  cpp: "",
+  go: "",
+});
 
 // 🔹 判题用例模态框状态
 const isJudgeCaseModalVisible = ref(false);
 const judgeCaseContent = ref("");
 
+// 🔹 解析答案代码块
+const parseAnswerCodeBlocks = (markdown: string | undefined) => {
+  if (!markdown || typeof markdown !== "string") {
+    console.warn("答案为空或无效，设置为默认占位符");
+    answerMap.value = {
+      java: "",
+      cpp: "",
+      go: "",
+    };
+    return;
+  }
+
+  // 初始化 answerMap
+  answerMap.value = {
+    java: "",
+    cpp: "",
+    go: "",
+  };
+
+  // 使用正则表达式分割 Java, C++, Go 答案
+  const codeBlockRegex = /```(java|cpp|go)\n([\s\S]*?)\n```/g;
+  let match;
+  while ((match = codeBlockRegex.exec(markdown)) !== null) {
+    const language = match[1];
+    const code = match[2].trim();
+    if (language in answerMap.value) {
+      answerMap.value[language] = `\`\`\`${language}\n${code}\n\`\`\``;
+    }
+  }
+};
+
 // 🔹 获取并显示代码
 const showCode = (record: any) => {
-  highlightedCode.value = hljs.highlight(record.answer, {
-    language: "java", // 确保传递正确的编程语言
-  }).value;
-
+  if (!record || !record.answer) {
+    parseAnswerCodeBlocks("");
+  } else {
+    parseAnswerCodeBlocks(record.answer);
+  }
   isCodeModalVisible.value = true;
 };
 
@@ -330,16 +400,20 @@ const showJudgeCase = (caseData: any) => {
 
 // 🔹 数据加载
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
-    ...searchParams.value,
-    sortField: "createTime",
-    sortOrder: "descend",
-  });
-  if (res.code === 0) {
-    dataList.value = res.data.records;
-    total.value = res.data.total;
-  } else {
-    Message.error("加载失败，" + res.message);
+  try {
+    const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
+      ...searchParams.value,
+      sortField: "createTime",
+      sortOrder: "descend",
+    });
+    if (res.code === 0) {
+      dataList.value = res.data.records || [];
+      total.value = res.data.total || 0;
+    } else {
+      Message.error("加载失败，" + res.message);
+    }
+  } catch (error) {
+    Message.error("加载题目出错");
   }
 };
 
@@ -350,7 +424,7 @@ const resetFilters = () => {
     tags: [],
     difficulty: undefined,
     creator: "",
-    pageSize: 10,
+    pageSize: 5,
     current: 1,
   };
   loadData();
@@ -360,14 +434,6 @@ const resetFilters = () => {
 const goToAddQuestionPage = () => {
   router.push({ path: "/question/add" });
 };
-
-watchEffect(() => {
-  loadData();
-});
-
-onMounted(() => {
-  loadData();
-});
 
 // 🔹 格式化日期
 const formatDate = (date: string) => {
@@ -387,47 +453,36 @@ const tags = [
   { value: "动态规划", name: "动态规划", color: "chocolate" },
   { value: "滑动窗口", name: "滑动窗口", color: "indigo" },
 ];
+
 // 🔹 获取题目标签的颜色
 const getTagColor = (tag: string) => {
-  switch (tag) {
-    case "栈":
-      return "darkslateblue";
-    case "图":
-      return "darkseagreen";
-    case "数组":
-      return "darkgoldenrod";
-    case "链表":
-      return "darkmagenta";
-    case "排序":
-      return "darkorange";
-    case "哈希表":
-      return "salmon";
-    case "字符串":
-      return "darkkhaki";
-    case "二叉树":
-      return "teal";
-    case "双指针":
-      return "steelblue";
-    case "动态规划":
-      return "chocolate";
-    case "滑动窗口":
-      return "indigo";
-    default:
-      return "gray";
-  }
+  const tagColors: { [key: string]: string } = {
+    栈: "darkslateblue",
+    图: "darkseagreen",
+    数组: "darkgoldenrod",
+    链表: "darkmagenta",
+    排序: "darkorange",
+    哈希表: "salmon",
+    字符串: "darkkhaki",
+    二叉树: "teal",
+    双指针: "steelblue",
+    动态规划: "chocolate",
+    滑动窗口: "indigo",
+  };
+  return tagColors[tag] || "gray";
 };
 
 // 获取题目难度标签颜色
 const getDifficultyColor = (difficulty: number) => {
   switch (difficulty) {
     case 0:
-      return "green"; // 简单
+      return "green";
     case 1:
-      return "orange"; // 中等
+      return "orange";
     case 2:
-      return "red"; // 困难
+      return "red";
     default:
-      return "gray"; // 默认
+      return "gray";
   }
 };
 
@@ -449,11 +504,11 @@ const getDifficultyLabel = (difficulty: number) => {
 const getConfigTagColor = (key: string) => {
   switch (key) {
     case "timeLimit":
-      return "orange"; // 时间限制
+      return "orange";
     case "memoryLimit":
-      return "blue"; // 内存限制
+      return "blue";
     case "stackLimit":
-      return "purple"; // 堆栈限制
+      return "purple";
     default:
       return "grey";
   }
@@ -471,6 +526,8 @@ const getConfigLabel = (key: string) => {
       return "配置";
   }
 };
+
+// 🔹 表格列定义
 const columns = [
   {
     title: "题目名称",
@@ -516,22 +573,30 @@ const columns = [
 // 🔹 分页操作
 const onPageChange = (page: number) => {
   searchParams.value.current = page;
+  loadData();
 };
 
 const onPageSizeChange = (size: number) => {
   searchParams.value.pageSize = size;
+  searchParams.value.current = 1;
+  loadData();
 };
 
 // 🔹 删除操作
 const doDelete = async (question: Question) => {
-  const res = await QuestionControllerService.deleteQuestionUsingPost({
-    id: question.id,
-  });
-  if (res.code === 0) {
-    Message.success("删除成功");
-    loadData();
-  } else {
-    Message.error("删除失败，" + res.message);
+  try {
+    const res = await QuestionControllerService.deleteQuestionUsingPost({
+      id: question.id,
+    });
+    if (res.code === 0) {
+      Message.success("删除成功");
+      loadData();
+    } else {
+      Message.error("删除失败，" + res.message);
+    }
+  } catch (error) {
+    Message.error("删除出错");
+    console.error("删除失败:", error); // 调试：记录错误
   }
 };
 
@@ -543,7 +608,7 @@ const doUpdate = (question: Question) => {
   });
 };
 
-/* 🔹 页面跳转 */
+// 🔹 页面跳转
 const toQuestionPage = (questionId: string) => {
   router.push({ path: `/question/practice/${questionId}` });
 };
@@ -553,6 +618,11 @@ const doSubmit = () => {
   searchParams.value.current = 1;
   loadData();
 };
+
+// 🔹 初始化加载
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style scoped>
@@ -581,8 +651,37 @@ const doSubmit = () => {
   margin-left: 10px;
 }
 
+.code-modal {
+  border-radius: 8px;
+}
+
 .code-box {
   max-height: 500px;
-  overflow: auto;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.code-box :deep(.markdown-body) {
+  background-color: transparent;
+  padding: 0;
+}
+
+.code-box :deep(.markdown-body pre) {
+  border-radius: 3px;
+  padding: 12px;
+}
+
+.code-box :deep(.markdown-body h3) {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.answer-tabs {
+  margin-top: 8px;
 }
 </style>
