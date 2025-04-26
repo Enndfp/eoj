@@ -41,9 +41,10 @@ watch(
   () => props.language,
   () => {
     if (codeEditor.value) {
+      toRaw(codeEditor?.value).getModel().setValue(props.value);
       monaco.editor.setModelLanguage(
-        toRaw(codeEditor.value).getModel(), // 获取当前模型
-        props.language // 设置新的语言
+        toRaw(codeEditor.value).getModel(),
+        props.language
       );
     }
   }

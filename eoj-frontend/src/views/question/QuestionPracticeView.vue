@@ -217,10 +217,10 @@
                   <a-option value="java">
                     <a-tag color="#f89820" class="bold-text">Java</a-tag>
                   </a-option>
-                  <a-option value="cpp" disabled>
+                  <a-option value="cpp">
                     <a-tag color="#00599C" class="bold-text">C++</a-tag>
                   </a-option>
-                  <a-option value="go" disabled>
+                  <a-option value="go">
                     <a-tag color="#00ADD8" class="bold-text">Go</a-tag>
                   </a-option>
                 </a-select>
@@ -477,21 +477,20 @@ import moment from "moment/moment";
 /* ---------------------- 状态管理 ---------------------- */
 
 // 题目相关状态
-const question = ref<QuestionVO>(); // 题目信息
-const activeTab = ref("question"); // 当前激活的标签页
+const question = ref<QuestionVO>();
+const activeTab = ref("question");
 
 // 提交记录相关状态
-const submissionRecords = ref([]); // 提交记录列表
-const currentPage = ref(1); // 当前页码
-const pageSize = ref(10); // 每页记录数
-const total = ref(0); // 总记录数
-const codeModalVisible = ref(false); // 控制代码查看模态框显示
-const selectedSubmission = ref(null); // 当前查看的提交记录
+const submissionRecords = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+const codeModalVisible = ref(false);
+const selectedSubmission = ref(null);
 
-// 提交表单相关状态
-const form = ref<QuestionSubmitAddRequest>({
-  language: "java", // 默认语言为 Java
-  code: `/*
+// 定义语言初始模板
+const languageTemplates = {
+  java: `/*
  * 请根据题目要求编写解题代码
  * 1. 无需导入 package
  * 2. 类名必须是 Main，不能修改
@@ -503,22 +502,52 @@ public class Main {
     }
 }
   `,
-  theme: "vs-light", // 默认主题为 Light
+  cpp: `/*
+ * 请根据题目要求编写解题代码
+ * 1. 请从标准输入读取数据
+ * 2. 输出结果到标准输出
+ */
+#include <iostream>
+using namespace std;
+
+int main() {
+    // 在此编写您的解题代码
+    return 0;
+}
+  `,
+  go: `/*
+ * 请根据题目要求编写解题代码
+ * 1. 请从标准输入读取数据
+ * 2. 输出结果到标准输出
+ */
+package main
+
+import "fmt"
+
+func main() {
+    // 在此编写您的解题代码
+}
+  `,
+};
+
+// 提交表单相关状态
+const form = ref<QuestionSubmitAddRequest>({
+  language: "java",
+  code: languageTemplates.java,
+  theme: "vs-light",
 });
 
 // 计时器相关状态
-const showTimer = ref(false); // 是否显示计时器
-const time = ref(0); // 计时器时间（秒）
-let intervalId: any = null; // 计时器 interval ID
+const showTimer = ref(false);
+const time = ref(0);
+let intervalId: any = null;
 
-/* ---------------------- 控制台管理 ---------------------- */
-
-// 添加控制台相关状态
-const consoleVisible = ref(false); // 控制台是否显示
-const activeConsoleTab = ref("testcase"); // 当前激活的控制台选项卡
-const testResult = ref<any>(null); // 测试运行结果
-const testRunning = ref(false); // 是否正在运行
-const editorHeight = ref("66.7vh"); // 编辑器高度
+// 控制台相关状态
+const consoleVisible = ref(false);
+const activeConsoleTab = ref("testcase");
+const testResult = ref<any>(null);
+const testRunning = ref(false);
+const editorHeight = ref("66.7vh");
 
 // 从题目中读取第一个测试用例
 const firstTestCase = computed(() => {
@@ -528,7 +557,7 @@ const firstTestCase = computed(() => {
   return null;
 });
 
-// 判断是否通过（对比输出和预期结果）
+// 判断是否通过
 const isPassed = computed(() => {
   if (!testResult.value || !firstTestCase.value) return false;
   return testResult.value.output === firstTestCase.value.output;
@@ -551,7 +580,6 @@ const runCode = async () => {
     return;
   }
 
-  // 设置运行状态并切换到“执行结果”选项卡
   testRunning.value = true;
   testResult.value = null;
   consoleVisible.value = true;
@@ -580,7 +608,6 @@ const runCode = async () => {
 
 /* ---------------------- 表格和分页配置 ---------------------- */
 
-// 提交记录表格列定义
 const columns = [
   {
     title: "状态",
@@ -627,7 +654,6 @@ const columns = [
   },
 ];
 
-// 分页配置
 const pagination = computed(() => ({
   total: total.value,
   pageSize: pageSize.value,
@@ -643,9 +669,8 @@ const pagination = computed(() => ({
 
 /* ---------------------- 工具函数 ---------------------- */
 
-// 获取状态颜色（提交记录表格用）
 const getStatusColor = (status: any): string => {
-  if (status === "pending") return "blue"; // 蓝色表示“判题中”
+  if (status === "pending") return "blue";
   const numericStatus = Number(status);
   const statusColors: { [key: number]: string } = {
     0: "red",
@@ -657,7 +682,7 @@ const getStatusColor = (status: any): string => {
 };
 
 const getStatusText = (status: any): string => {
-  if (status === "pending") return "判题中"; // 添加“判题中”状态
+  if (status === "pending") return "判题中";
   const numericStatus = Number(status);
   const statusTexts: { [key: number]: string } = {
     0: "错误",
@@ -668,17 +693,14 @@ const getStatusText = (status: any): string => {
   return statusTexts[numericStatus] || "未知";
 };
 
-// 首字母大写
 const capitalizeFirstLetter = (str: string): string => {
   if (!str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
-// 格式化日期时间
 const formatDateTime = (date: string) =>
   moment(date).format("YYYY-MM-DD HH:mm:ss");
 
-// 格式化计时器时间
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 3600);
   const minutes = Math.floor((time % 3600) / 60);
@@ -688,7 +710,6 @@ const formatTime = (time: number): string => {
   }:${seconds < 10 ? "0" + seconds : seconds}`;
 };
 
-// 获取题目标签颜色
 const getTagColor = (tag: string): string => {
   const tagColors: { [key: string]: string } = {
     栈: "darkslateblue",
@@ -706,7 +727,6 @@ const getTagColor = (tag: string): string => {
   return tagColors[tag] || "gray";
 };
 
-// 获取题目难度颜色
 const getDifficultyColor = (difficulty: number): string => {
   switch (difficulty) {
     case 0:
@@ -720,7 +740,6 @@ const getDifficultyColor = (difficulty: number): string => {
   }
 };
 
-// 获取题目难度文本
 const getDifficultyText = (difficulty: number): string => {
   switch (difficulty) {
     case 0:
@@ -734,20 +753,36 @@ const getDifficultyText = (difficulty: number): string => {
   }
 };
 
+// 格式化语言显示名称
+const getLanguageDisplayName = (language: string): string => {
+  const displayNames: { [key: string]: string } = {
+    java: "Java",
+    cpp: "C++",
+    go: "Go",
+  };
+  return displayNames[language] || capitalizeFirstLetter(language);
+};
+
+// 格式化主题显示名称
+const getThemeDisplayName = (theme: string): string => {
+  const displayNames: { [key: string]: string } = {
+    "vs-light": "Light",
+    "vs-dark": "Dark",
+  };
+  return displayNames[theme] || capitalizeFirstLetter(theme);
+};
+
 /* ---------------------- 计时器逻辑 ---------------------- */
 
-// 开始计时
 const startTimer = () => {
   showTimer.value = true;
 };
 
-// 停止计时
 const stopTimer = () => {
   showTimer.value = false;
   time.value = 0;
 };
 
-// 监听计时器状态变化
 watch(
   () => showTimer.value,
   (newVal: boolean) => {
@@ -761,14 +796,42 @@ watch(
   }
 );
 
-// 组件卸载时清除计时器
 onUnmounted(() => {
   clearInterval(intervalId);
 });
 
+/* ---------------------- 语言和主题切换逻辑 ---------------------- */
+
+// 监听语言切换并加载对应模板
+watch(
+  () => form.value.language,
+  (newLanguage, oldLanguage) => {
+    const newTemplate = languageTemplates[newLanguage];
+    if (!newTemplate) {
+      Message.error(`语言 ${getLanguageDisplayName(newLanguage)} 暂无模板`);
+      return;
+    }
+    form.value.code = newTemplate;
+    if (oldLanguage) {
+      Message.success(`已切换到 ${getLanguageDisplayName(newLanguage)} 模板`);
+    }
+  },
+  { immediate: true }
+);
+
+// 监听主题切换
+watch(
+  () => form.value.theme,
+  (newTheme, oldTheme) => {
+    if (oldTheme) {
+      Message.success(`已切换到 ${getThemeDisplayName(newTheme)} 主题`);
+    }
+  },
+  { immediate: true }
+);
+
 /* ---------------------- 数据加载和提交逻辑 ---------------------- */
 
-// 定义 Props 接口
 interface Props {
   id: string;
 }
@@ -777,29 +840,29 @@ const props = withDefaults(defineProps<Props>(), {
   id: () => "",
 });
 
-// 获取登录用户信息
 const store = useStore();
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
 ) as LoginUserVO;
 
-// 加载题目信息
 const loadData = async () => {
-  const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
-    props.id as any
-  );
-  if (res.code === 0) {
-    question.value = res.data;
-  } else {
-    Message.error("加载失败：" + res.message);
+  try {
+    const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
+      props.id as any
+    );
+    if (res.code === 0) {
+      question.value = res.data;
+    } else {
+      Message.error("加载失败：" + res.message);
+    }
+  } catch (error) {
+    Message.error("加载题目出错");
   }
 };
 
-// 加载提交记录
 const loadSubmitRecords = async (page = 1) => {
   try {
     currentPage.value = page;
-
     const res =
       await QuestionControllerService.listQuestionSubmitVoByPageUsingPost({
         questionId: props.id as any,
@@ -821,13 +884,11 @@ const loadSubmitRecords = async (page = 1) => {
   }
 };
 
-// 处理分页切换
 const handlePageChange = (page: number) => {
   currentPage.value = page;
   loadSubmitRecords(page);
 };
 
-// 提交代码
 const doSubmit = async () => {
   if (!question.value?.id) return;
 
@@ -839,24 +900,22 @@ const doSubmit = async () => {
 
     if (res.code === 0) {
       Message.success("提交成功");
-      activeTab.value = "submissions"; // 切换到提交记录tab
+      activeTab.value = "submissions";
 
-      // 添加临时“判题中”记录
       const tempSubmission = {
-        id: Date.now(), // 临时唯一ID
-        status: "pending", // 表示判题中
+        id: Date.now(),
+        status: "pending",
         language: form.value.language,
         code: form.value.code,
         createTime: new Date().toISOString(),
         judgeInfo: { time: "N/A", memory: "N/A" },
-        userVO: loginUser.value, // 当前用户信息
+        userVO: loginUser.value,
       };
       submissionRecords.value = [tempSubmission, ...submissionRecords.value];
 
-      // 异步刷新提交记录
       setTimeout(async () => {
-        await loadSubmitRecords(1); // 刷新第一页
-      }, 1000); // 延迟1秒，可根据实际判题速度调整
+        await loadSubmitRecords(1);
+      }, 1000);
     } else {
       Message.error("提交失败，" + res.message);
     }
@@ -865,20 +924,17 @@ const doSubmit = async () => {
   }
 };
 
-// 查看提交代码
 const viewSubmissionCode = (record: any) => {
   selectedSubmission.value = record;
   codeModalVisible.value = true;
 };
 
-// 代码编辑器内容变更
 const changeCode = (value: string) => {
   form.value.code = value;
 };
 
 /* ---------------------- 生命周期钩子 ---------------------- */
 
-// 组件挂载时加载数据
 onMounted(() => {
   loadData();
   loadSubmitRecords();
